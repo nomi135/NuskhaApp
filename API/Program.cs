@@ -6,6 +6,10 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Remove logging to Event Log and use Console instead
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole(); // Logs to console instead of Windows Event Log
+
             // Add services to the container.
 
             builder.Services.AddControllers();
