@@ -1,0 +1,32 @@
+﻿using API.Data;
+using API.Interfaces;
+using API.Services;
+using Microsoft.EntityFrameworkCore;
+
+namespace API.Extensions
+{
+    public static class ApplicationServiceExtensions
+    {
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+        {
+            services.AddControllers();
+            services.AddDbContext<DataContext>(opt =>
+            {
+                opt.UseSqlServer(config.GetConnectionString("dbConnection"));
+            });
+
+            //Register IHttpContextAccessor first
+            services.AddHttpContextAccessor(); // cannot use IHttpContextAccessor due to hangfire
+            //Register HttpClient
+            services.AddScoped<HttpClient>();
+            //Register other services
+            services.AddMemoryCache();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddCors();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            return services;
+        }
+    }
+}

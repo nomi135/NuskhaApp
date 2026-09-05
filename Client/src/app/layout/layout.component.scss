@@ -1,0 +1,109 @@
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+:host {
+  --nuskha-green: #1b5e3f;        // deep herbal green (brand primary)
+  --nuskha-green-dark: #123f2a;   // hover / active states
+  --nuskha-green-light: #e8f3ec;  // soft tint for backgrounds/highlights
+  --nuskha-white: #ffffff;
+}
+
+// ===== Navbar =====
+.navbar {
+  transition: box-shadow 0.2s ease;
+
+  .navbar-brand img {
+    transition: transform 0.2s ease;
+  }
+
+  .navbar-brand:hover img {
+    transform: scale(1.03);
+  }
+
+  .nav-link {
+    color: #2c2c2c;
+    font-weight: 500;
+    position: relative;
+    margin: 0 4px;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--nuskha-green);
+    }
+
+    &.active {
+      color: var(--nuskha-green);
+      font-weight: 600;
+    }
+
+    // subtle underline animation on hover/active
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0;
+      height: 2px;
+      background-color: var(--nuskha-green);
+      transition: width 0.2s ease;
+    }
+
+    &:hover::after,
+    &.active::after {
+      width: 100%;
+    }
+  }
+}
+
+// ===== Buttons (override Bootstrap success) =====
+.btn-success {
+  background-color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover,
+  &:focus {
+    background-color: var(--nuskha-green-dark);
+    border-color: var(--nuskha-green-dark);
+  }
+}
+
+.btn-outline-success {
+  color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover,
+  &:focus {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+    color: var(--nuskha-white);
+  }
+}
+
+// ===== Text/icon accents =====
+.text-success {
+  color: var(--nuskha-green) !important;
+}
+
+footer {
+  .fs-5 a.text-success:hover {
+    color: var(--nuskha-green-dark) !important;
+  }
+
+  a.text-body:hover {
+    color: var(--nuskha-green) !important;
+    text-decoration: underline !important;
+  }
+}
+
+// ===== Back-to-top button =====
+.btn.rounded-circle.btn-success {
+  &:hover {
+    background-color: var(--nuskha-green-dark);
+    border-color: var(--nuskha-green-dark);
+  }
+}
+
+// ===== Footer background tint =====
+footer.bg-light {
+  background-color: var(--nuskha-green-light) !important;
+}

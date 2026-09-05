@@ -1,0 +1,16 @@
+.navbar {
+  min-height: 64px;
+}
+
+.navbar-brand {
+  font-size: 1.35rem;
+  letter-spacing: 0.3px;
+}
+
+main {
+  min-height: calc(100vh - 140px);
+}
+
+footer {
+  background-color: #f8f9fa;
+}

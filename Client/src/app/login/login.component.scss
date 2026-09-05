@@ -1,0 +1,69 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+  --nuskha-green-light: #e8f3ec;
+}
+
+.login-page {
+  min-height: 100vh;
+}
+
+.brand-panel {
+  background: linear-gradient(160deg, var(--nuskha-green) 0%, var(--nuskha-green-dark) 100%);
+  position: relative;
+  overflow: hidden;
+
+  h2 { font-size: 1.9rem; }
+  p { opacity: 0.9; line-height: 1.7; }
+
+  .brand-decor {
+    font-size: 5rem;
+    opacity: 0.15;
+  }
+
+  // soft decorative circles
+  &::before {
+    content: "";
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    top: -100px;
+    right: -100px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    bottom: -80px;
+    left: -60px;
+  }
+}
+
+.login-form {
+  .btn-success {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+
+    &:hover:not(:disabled) {
+      background-color: var(--nuskha-green-dark);
+      border-color: var(--nuskha-green-dark);
+    }
+
+    &:disabled { opacity: 0.6; }
+  }
+
+  .link-success {
+    color: var(--nuskha-green);
+
+    &:hover {
+      color: var(--nuskha-green-dark);
+      text-decoration: underline !important;
+    }
+  }
+}

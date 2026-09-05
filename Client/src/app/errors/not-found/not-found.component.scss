@@ -1,0 +1,33 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+}
+
+.notfound-page {
+  background-color: #fafafa;
+
+  i.bi-compass {
+    color: var(--nuskha-green);
+    animation: spin-slow 6s linear infinite;
+  }
+
+  h1 {
+    color: var(--nuskha-green);
+    letter-spacing: -1px;
+  }
+
+  .btn-success {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+
+    &:hover {
+      background-color: var(--nuskha-green-dark);
+      border-color: var(--nuskha-green-dark);
+    }
+  }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
