@@ -1,0 +1,14 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+}
+
+.btn-success {
+  background-color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover:not(:disabled) {
+    background-color: var(--nuskha-green-dark);
+    border-color: var(--nuskha-green-dark);
+  }
+}

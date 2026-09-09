@@ -1,21 +1,43 @@
-<div class="d-flex flex-column justify-content-center align-items-center hero">
-    <div class="container row section-title col-md-12" data-aos="fade-up">
-        <h4>Internal Server Error</h4>
+<div class="server-error-page d-flex flex-column justify-content-center align-items-center min-vh-100 px-3 py-5">
+    <div class="container" style="max-width: 720px;" data-aos="fade-up">
+
+        <div class="text-center mb-4">
+            <i class="bi bi-exclamation-octagon display-1 text-danger mb-3 d-inline-block"></i>
+            <h2 class="fw-bold mb-1">Internal Server Error</h2>
+            <p class="text-muted mb-0">Something went wrong while processing your request.</p>
+        </div>
+
         @if (error) {
-            <h5 class="text-danger">Error: {{error.message}}</h5>
-            <p class="font-weight-bold">Note: If you are seeing this error then angular is not to blame!</p>
-            <p>What to do next?</p>
-            <ol>
-                <li>Open chrome dev tools and check the failing network request in the network tab</li>
-                <li>Examine the URL of the failing request</li>
-                <li>Reproduce the error in postman - if you can reproduce the error then angular is not to blame</li>
-            </ol>
-            <p class="font-weight-bold">Following is the stack trace - check the first 2 
-                lines this tells you exactly which line of code caused the problem!</p>
-            <code class="mt-5" style="background-color: whitesmoke;">
-                {{error.details}}
-            </code>
-            <a class="btn-info" routerLink="/">Return to home page</a>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <div class="alert alert-danger mb-4">
+                        <strong>Error:</strong> {{error.message}}
+                    </div>
+
+                    <p class="fw-semibold mb-2">Note: If you are seeing this error, Angular is not to blame.</p>
+
+                    <p class="fw-semibold mb-2">What to do next?</p>
+                    <ol class="mb-4">
+                        <li>Open Chrome DevTools and check the failing network request in the Network tab.</li>
+                        <li>Examine the URL of the failing request.</li>
+                        <li>Reproduce the error in Postman — if you can reproduce it there, Angular is not to blame.</li>
+                    </ol>
+
+                    <p class="fw-semibold mb-2">
+                        Stack trace — check the first 2 lines, they tell you exactly which line of code caused the problem:
+                    </p>
+                    <pre class="error-trace p-3 mb-0"><code>{{error.details}}</code></pre>
+
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a routerLink="/" class="btn btn-success px-4 py-2">
+                    <i class="bi bi-house-door me-2"></i>Return to Home
+                </a>
+            </div>
         }
+
     </div>
 </div>

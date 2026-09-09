@@ -45,16 +45,15 @@ namespace API
 
             app.UseCors("AngularCors");
 
+            app.UseHttpsRedirection();
+            
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.UseDefaultFiles();
-
             app.UseStaticFiles();
 
             app.MapControllers();
-            
             app.MapFallbackToController("Index", "Fallback");
 
             using var scope = app.Services.CreateScope();

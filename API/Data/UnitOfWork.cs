@@ -2,9 +2,10 @@
 
 namespace API.Data
 {
-    public class UnitOfWork(DataContext context, IUserRepository userRepository) : IUnitOfWork
+    public class UnitOfWork(DataContext context, IUserRepository userRepository, IDiseaseRepository diseaseRepository) : IUnitOfWork
     {
         public IUserRepository UserRepository => userRepository;
+        public IDiseaseRepository DiseaseRepository => diseaseRepository;
 
         public async Task<bool> Complete()
         {

@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Edit Disease' : 'Add Disease' }}</h5>
+    <button type="button" class="btn-close" (click)="cancel()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body position-relative">
+    <ngx-spinner name="disease-form-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                 size="medium" color="#1b5e3f" type="ball-clip-rotate">
+    </ngx-spinner>
+
+    <form [formGroup]="diseaseForm" (ngSubmit)="save()" novalidate>
+        <div class="mb-3">
+            <label class="form-label">Name <span class="text-danger">*</span></label>
+            <app-text-input
+                [formControl]="$any(diseaseForm.controls['name'])"
+                [label]="'Name'">
+            </app-text-input>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Image <span class="text-danger">*</span></label>
+            <input type="file" class="form-control" accept="image/*"
+                   [class.is-invalid]="submitted && !selectedFile && !isEditMode"
+                   (change)="onFileSelected($event)">
+
+            @if (submitted && !selectedFile && !isEditMode) {
+                <div class="invalid-feedback d-block">Please select an image.</div>
+            }
+        </div>
+
+        @if (imagePreview) {
+            <img [src]="imagePreview" alt="Preview" class="rounded border mb-3"
+                 style="width: 100px; height: 100px; object-fit: cover;">
+        }
+
+        <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Save
+            </button>
+        </div>
+    </form>
+</div>

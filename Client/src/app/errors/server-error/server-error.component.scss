@@ -1,0 +1,38 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+}
+
+.server-error-page {
+  background-color: #fafafa;
+
+  .card {
+    border-radius: 12px;
+  }
+
+  ol li {
+    margin-bottom: 0.4rem;
+  }
+
+  .error-trace {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 260px;
+    overflow-y: auto;
+    color: #b00020;
+  }
+
+  .btn-success {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+
+    &:hover {
+      background-color: var(--nuskha-green-dark);
+      border-color: var(--nuskha-green-dark);
+    }
+  }
+}

@@ -27,6 +27,7 @@
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form" autocomplete="off">
+          <ngx-spinner type="line-scale-party" [fullScreen]="true"></ngx-spinner>
           <div class="mb-3">
             <app-text-input
                 [formControl]="$any(loginForm.controls['username'])"
