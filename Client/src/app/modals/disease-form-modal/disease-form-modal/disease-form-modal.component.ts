@@ -7,7 +7,7 @@ import { DiseaseService } from '../../../_services/disease.service';
 import { TextInputComponent } from '../../../_forms/text-input/text-input.component';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-disease-form-modal',
@@ -31,7 +31,7 @@ export class DiseaseFormModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private diseaseService = inject(DiseaseService);
   private toastr = inject(ToastrService);
-  baseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+  baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
 
   diseaseForm : FormGroup = this.fb.group({
     name: ['', Validators.required]

@@ -4,8 +4,8 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { SymptomService } from '../../_services/symptom.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../environments/environment.development';
 import { SymptomFormModalComponent } from '../../modals/symptom-form-modal/symptom-form-modal/symptom-form-modal.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-symptom-management',
@@ -19,7 +19,7 @@ export class SymptomManagementComponent implements OnInit {
    private modalService =  inject(BsModalService);
    private spinnerService = inject(NgxSpinnerService);
    private toastr = inject(ToastrService);
-   baseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+   baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
    symptoms: Symptom[] = [];
    bsModalRef?: BsModalRef;
 

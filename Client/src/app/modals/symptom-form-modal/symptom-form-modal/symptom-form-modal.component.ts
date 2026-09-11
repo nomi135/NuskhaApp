@@ -3,7 +3,6 @@ import { Symptom, SymptomForm } from '../../../_models/symptom';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Disease } from '../../../_models/disease';
-import { environment } from '../../../../environments/environment.development';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SymptomService } from '../../../_services/symptom.service';
 import { DiseaseService } from '../../../_services/disease.service';
@@ -11,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { TextInputComponent } from '../../../_forms/text-input/text-input.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-symptom-form-modal',
@@ -37,7 +37,7 @@ export class SymptomFormModalComponent implements OnInit {
   private symptomService = inject(SymptomService);
   private diseaseService = inject(DiseaseService);
   private toastr = inject(ToastrService);
-  baseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+  baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
   
   symptomForm : FormGroup = this.fb.group({
     name: ['', Validators.required]

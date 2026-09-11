@@ -5,7 +5,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Disease } from '../../_models/disease';
 import { DiseaseFormModalComponent } from '../../modals/disease-form-modal/disease-form-modal/disease-form-modal.component';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-disease-management',
@@ -19,7 +19,7 @@ export class DiseaseManagementComponent implements OnInit {
   private modalService =  inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
   private toastr = inject(ToastrService);
-  baseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+  baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
   diseases: Disease[] = [];
   bsModalRef?: BsModalRef;
 
