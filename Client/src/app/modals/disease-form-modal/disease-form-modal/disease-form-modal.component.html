@@ -25,6 +25,8 @@
 
             @if (submitted && !selectedFile && !isEditMode) {
                 <div class="invalid-feedback d-block">Please select an image.</div>
+            }  @else if (isEditMode && !selectedFile) {
+                <div class="form-text">Current image will be kept unless you upload a new one.</div>
             }
         </div>
 

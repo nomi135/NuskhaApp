@@ -1,0 +1,82 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Edit Symptom' : 'Add Symptom' }}</h5>
+    <button type="button" class="btn-close" (click)="cancel()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body position-relative">
+    <ngx-spinner name="disease-form-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                 size="medium" color="#1b5e3f" type="ball-clip-rotate">
+    </ngx-spinner>
+
+    <form [formGroup]="symptomForm" (ngSubmit)="save()" novalidate>
+        <div class="mb-3">
+            <label class="form-label">Name <span class="text-danger">*</span></label>
+            <app-text-input
+                [formControl]="$any(symptomForm.controls['name'])"
+                [label]="'Name'">
+            </app-text-input>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Image <span class="text-danger">*</span></label>
+            <input type="file" class="form-control" accept="image/*"
+                   [class.is-invalid]="submitted && !selectedFile && !imagePreview && !isEditMode"
+                   (change)="onFileSelected($event)">
+
+            @if (submitted && !selectedFile && !imagePreview && !isEditMode) {
+                <div class="invalid-feedback d-block">Please select an image.</div>
+            } @else if (isEditMode && !selectedFile) {
+                <div class="form-text">Current image will be kept unless you upload a new one.</div>
+            }
+        </div>
+
+        @if (imagePreview) {
+            <img [src]="imagePreview" alt="Preview" class="rounded border mb-3"
+                 style="width: 100px; height: 100px; object-fit: cover;">
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Related Diseases <span class="text-danger">*</span></label>
+            <div class="dropdown" dropdown [autoClose]="false">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle w-100 text-start text-truncate"
+                        [class.is-invalid]="submitted && selectedDiseaseIds.length === 0"
+                        dropdownToggle>
+                    {{ selectedDiseaseNames }}
+                </button>
+                <ul *dropdownMenu class="dropdown-menu w-100 p-2" style="max-height: 220px; overflow-y: auto;">
+                    @for (disease of diseases; track disease.id) {
+                        <li>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" [id]="'disease-' + disease.id"
+                                       [checked]="isDiseaseSelected(disease.id)"
+                                       (change)="toggleDisease(disease.id)">
+                                <label class="form-check-label" [for]="'disease-' + disease.id">
+                                    {{ disease.name }}
+                                </label>
+                            </div>
+                        </li>
+                    } @empty {
+                        <li class="text-muted small px-2">No diseases available yet.</li>
+                    }
+                </ul>
+            </div>
+            @if (submitted && selectedDiseaseIds.length === 0) 
+            { 
+                <div class="invalid-feedback d-block"> Please select at least one disease. </div> 
+            } 
+            @else { 
+                <div class="form-text"> Select at least one disease related to this symptom. </div> 
+            } 
+        </div>
+
+        <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Save
+            </button>
+        </div>
+    </form>
+</div>

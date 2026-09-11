@@ -116,6 +116,11 @@ public class DiseaseService(IUnitOfWork unitOfWork, IWebHostEnvironment env) : I
     {
         Id = disease.Id,
         Name = disease.Name,
-        ImageUrl = disease.ImagePath
+        ImageUrl = disease.ImagePath,
+        Symptoms = disease.Symptoms.Select(s => new SymptomLookupDto
+        {
+            Id = s.Id,
+            Name = s.Name
+        }).ToList()
     };
 }

@@ -27,4 +27,7 @@ public class DiseaseRepository(DataContext context) : IDiseaseRepository
 
         return await query.AnyAsync();
     }
+
+    public async Task<List<Symptom>> GetSymptomsByIdsAsync(List<int> symptomIds) =>
+        await context.Symptoms.Where(s => symptomIds.Contains(s.Id)).ToListAsync();
 }

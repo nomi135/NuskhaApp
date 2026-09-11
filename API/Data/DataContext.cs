@@ -5,10 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, 
+    public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
         IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
     {
         public DbSet<Disease> Diseases { get; set; }
+        public DbSet<Symptom> Symptoms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +30,16 @@ namespace API.Data
             builder.Entity<Disease>()
             .HasIndex(d => d.Name)
             .IsUnique();
+
+            builder.Entity<Symptom>()
+           .HasIndex(s => s.Name)
+           .IsUnique();
+
+            // Many-to-many: EF Core auto-generates the join table "DiseaseSymptom"
+            builder.Entity<Disease>()
+                .HasMany(d => d.Symptoms)
+                .WithMany(s => s.Diseases)
+                .UsingEntity(j => j.ToTable("DiseaseSymptom"));
 
         }
     }

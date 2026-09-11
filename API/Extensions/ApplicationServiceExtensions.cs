@@ -23,9 +23,11 @@ namespace API.Extensions
             services.AddMemoryCache();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+            services.AddScoped<ISymptomRepository, SymptomRepository>();
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
+            services.AddScoped<ISymptomService, SymptomService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

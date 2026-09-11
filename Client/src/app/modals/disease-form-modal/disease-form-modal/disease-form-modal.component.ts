@@ -62,14 +62,13 @@ export class DiseaseFormModalComponent implements OnInit {
     this.submitted = true;
 
     const missingImage = !this.selectedFile && !this.imagePreview;
-    debugger;
     if (this.diseaseForm.invalid || missingImage) {
       this.diseaseForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting = true;
-     this.spinnerService.show(undefined, {
+    this.spinnerService.show(undefined, {
       type: 'line-scale-party',
       bdColor: 'rgba(2555,2555,255,0)',
       color: '#333333'

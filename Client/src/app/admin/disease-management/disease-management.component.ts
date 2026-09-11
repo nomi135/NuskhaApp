@@ -67,13 +67,14 @@ export class DiseaseManagementComponent implements OnInit {
   deleteDisease(disease: Disease): void {
     if (!confirm(`Are you sure you want to delete "${disease.name}"?`)) return;
 
-     this.spinnerService.show(undefined, {
+    this.spinnerService.show(undefined, {
       type: 'line-scale-party',
       bdColor: 'rgba(2555,2555,255,0)',
       color: '#333333'
     });
     this.diseaseService.deleteDisease(disease.id).subscribe({
       next: () => {
+        this.spinnerService.hide();
         this.toastr.success("Disease deleted successfully.");
         this.loadDiseases();
       },
@@ -84,4 +85,5 @@ export class DiseaseManagementComponent implements OnInit {
       }
     });
   }
+  
 }
