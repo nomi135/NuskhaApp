@@ -7,8 +7,7 @@ namespace API.DTOs
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public IFormFile Image { get; set; } = null!;
+        public IFormFile? Image { get; set; }
 
         // IDs of diseases this symptom is associated with. Optional — a symptom
         // can be created before being linked to any disease.

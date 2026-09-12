@@ -48,7 +48,9 @@ export class SymptomFormModalComponent implements OnInit {
 
     if (this.symptom) {
       this.symptomForm.patchValue({ name: this.symptom.name });
-      this.imagePreview = this.baseUrl + this.symptom.imageUrl;
+      if (this.symptom.imageUrl) {
+        this.imagePreview = this.baseUrl + this.symptom.imageUrl;
+      }
       this.selectedDiseaseIds = this.symptom.diseases.map(d => d.id);
     }
   }
@@ -107,8 +109,7 @@ export class SymptomFormModalComponent implements OnInit {
   async save(): Promise<void> {
     this.submitted = true;
 
-    const missingImage = !this.selectedFile && !this.imagePreview;
-    if (this.symptomForm.invalid || missingImage || this.selectedDiseaseIds.length === 0) {
+    if (this.symptomForm.invalid || this.selectedDiseaseIds.length === 0) {
       this.symptomForm.markAllAsTouched();
       return;
     }
@@ -121,7 +122,11 @@ export class SymptomFormModalComponent implements OnInit {
     });
 
     try {
-      const imageFile = await this.resolveImageFile();
+      let imageFile: File | undefined;
+
+      if (this.selectedFile) {
+        imageFile = await this.resolveImageFile();
+      }
 
       const model: SymptomForm = {
         name: this.symptomForm.value.name,

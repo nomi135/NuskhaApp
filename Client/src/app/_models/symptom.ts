@@ -9,6 +9,6 @@ export interface Symptom {
 
 export interface SymptomForm {
   name: string;
-  image: File;
+  image?: File;
   diseaseIds: number[];
 }

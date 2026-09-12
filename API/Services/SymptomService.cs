@@ -28,7 +28,7 @@ namespace API.Services
             if (await unitOfWork.SymptomRepository.NameExistsAsync(dto.Name))
                 throw new InvalidOperationException($"A symptom named '{dto.Name}' already exists.");
 
-            var imagePath = await SaveImageAsync(dto.Image, dto.Name);
+            var imagePath = dto.Image != null ? await SaveImageAsync(dto.Image, dto.Name) : null;
 
             var symptom = new Symptom
             {
@@ -59,11 +59,16 @@ namespace API.Services
             if (await unitOfWork.SymptomRepository.NameExistsAsync(dto.Name, id))
                 throw new InvalidOperationException($"A symptom named '{dto.Name}' already exists.");
 
-            var oldImagePath = symptom.ImagePath;
-            var newImagePath = await SaveImageAsync(dto.Image, dto.Name);
+            if(dto.Image != null)
+            {
+                var oldImagePath = symptom.ImagePath;
+                var newImagePath = await SaveImageAsync(dto.Image, dto.Name);
+                symptom.ImagePath = newImagePath;
+                if (oldImagePath != newImagePath)
+                    DeletePhysicalImage(oldImagePath);
+            }
 
             symptom.Name = dto.Name.Trim();
-            symptom.ImagePath = newImagePath;
 
             // Reset and re-link disease associations to match the incoming list exactly
             symptom.Diseases.Clear();
@@ -78,9 +83,6 @@ namespace API.Services
 
             if (!await unitOfWork.Complete())
                 throw new Exception("Failed to update symptom");
-
-            if (oldImagePath != newImagePath)
-                DeletePhysicalImage(oldImagePath);
 
             return MapToDto(symptom);
         }

@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
         <div class="container">
             <a routerLink="/" routerLinkActive="active" class="navbar-brand d-flex align-items-center">
-                <img src="images/nuskha_logo.png" alt="Nuskha logo" class="nuskha-logo me-2">
+                <img src="images/rxhomeopro_logo.png" alt="rxhomeopro logo" class="nuskha-logo me-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
                     aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,22 +10,34 @@
             </button>
             <div class="collapse navbar-collapse" id="navMain">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" routerLink="/" fragment="home" 
-                        routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeSection() === 'home'"
+                           routerLink="/" fragment="home" (click)="setActiveSection('home')">Home</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeSection() === 'about'"
+                           href="#about" (click)="setActiveSection('about')">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeSection() === 'services'"
+                           href="#services" (click)="setActiveSection('services')">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeSection() === 'how-it-works'"
+                           href="#how-it-works" (click)="setActiveSection('how-it-works')">How It Works</a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-lg-3 mb-2 mb-lg-0 align-items-lg-center">
                     @if (!accountService.currentUser()) {
                         <li class="nav-item">
-                            <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
+                            <a class="nav-link" routerLink="/login" routerLinkActive="active"
+                               (click)="setActiveSection('')">Login</a>
                         </li>
                     }
                     @if (accountService.currentUser()) {
                         <li class="nav-item">
-                            <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin Panel</a>
+                            <a class="nav-link" routerLink="/admin" routerLinkActive="active"
+                               (click)="setActiveSection('')">Admin Panel</a>
                         </li>
                         <li class="nav-item ms-lg-2">
                             <a class="btn btn-outline-success btn-sm px-3" href="#" (click)="logout()">Logout</a>
@@ -46,7 +58,7 @@
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6">
                 <a href="#" class="d-flex align-items-center text-decoration-none mb-3">
-                    <img src="images/nuskha_logo.png" alt="Nuskha logo" class="nuskha-logo me-2">
+                    <img src="images/rxhomeopro_logo.png" alt="rxhomeopro logo" class="nuskha-logo me-2">
                 </a>
                 <p class="text-body mb-3">
                     Homeopathy practice intelligence for Pakistan — helping doctors identify symptoms, diagnose conditions, and prescribe with confidence.
@@ -70,15 +82,26 @@
             <div class="col-lg-4 col-md-6">
                 <h5 class="mb-3">Useful Links</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/" fragment="home" 
-                        routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+                    <li class="mb-2">
+                        <a class="text-decoration-none text-body" [class.active]="activeSection() === 'home'"
+                           routerLink="/" fragment="home" (click)="setActiveSection('home')">Home</a>
                     </li>
-                    <li class="mb-2"><a class="text-decoration-none text-body" href="#about">About</a></li>
-                    <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Services</a></li>
-                    <li class="mb-2"><a class="text-decoration-none text-body" href="#how-it-works">How It Works</a></li>
+                    <li class="mb-2">
+                        <a class="text-decoration-none text-body" [class.active]="activeSection() === 'about'"
+                           href="#about" (click)="setActiveSection('about')">About</a>
+                    </li>
+                    <li class="mb-2">
+                        <a class="text-decoration-none text-body" [class.active]="activeSection() === 'services'"
+                           href="#services" (click)="setActiveSection('services')">Services</a>
+                    </li>
+                    <li class="mb-2">
+                        <a class="text-decoration-none text-body" [class.active]="activeSection() === 'how-it-works'"
+                           href="#how-it-works" (click)="setActiveSection('how-it-works')">How It Works</a>
+                    </li>
                     @if (!accountService.currentUser()) {
                         <li class="mb-2">
-                            <a class="text-decoration-none text-body" routerLink="/login" routerLinkActive="active">Login</a>
+                            <a class="text-decoration-none text-body" routerLink="/login" routerLinkActive="active"
+                               (click)="setActiveSection('')">Login</a>
                         </li>
                     }
                     @if (accountService.currentUser()) {
@@ -90,13 +113,14 @@
             </div>
 
             <div class="col-lg-4 col-md-12">
-                <h5 class="mb-3">Nuskha Services</h5>
+                <h5 class="mb-3">RxHomeoPro Services</h5>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Symptom &amp; Disease Identification</a></li>
-                    <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Homeopathic Medicine Suggestions</a></li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Symptom-to-Disease Mapping</a></li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Disease-to-Medicine Mapping</a></li>
                     <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Digital Patient Records</a></li>
                     <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Prescription Management</a></li>
-                    <li class="mb-2"><a class="text-decoration-none text-body" href="#for-doctors">Practice Intelligence for Doctors</a></li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" href="#services">Practice Intelligence</a></li>
                 </ul>
             </div>
         </div>
@@ -104,15 +128,7 @@
         <hr class="my-4">
 
         <p class="text-center small text-muted mb-0">
-            ©<span>{{currentYear}}</span> <strong class="text-success"> Nuskha.</strong> All Rights Reserved
+            ©<span>{{currentYear}}</span> <strong class="text-success"> RxHomeoPro.</strong> All Rights Reserved
         </p>
     </div>
 </footer>
-
-<a href="#"
-   (click)="scrollToTop($event)"
-   class="btn btn-success rounded-circle position-fixed bottom-0 end-0 m-4 d-flex align-items-center justify-content-center shadow"
-   style="width: 46px; height: 46px; z-index: 1030;"
-   aria-label="Scroll to top">
-    <i class="bi bi-arrow-up"></i>
-</a>

@@ -18,14 +18,11 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Image <span class="text-danger">*</span></label>
+            <label class="form-label">Image</label>
             <input type="file" class="form-control" accept="image/*"
-                   [class.is-invalid]="submitted && !selectedFile && !imagePreview && !isEditMode"
                    (change)="onFileSelected($event)">
 
-            @if (submitted && !selectedFile && !imagePreview && !isEditMode) {
-                <div class="invalid-feedback d-block">Please select an image.</div>
-            } @else if (isEditMode && !selectedFile) {
+            @if (isEditMode && !selectedFile) {
                 <div class="form-text">Current image will be kept unless you upload a new one.</div>
             }
         </div>

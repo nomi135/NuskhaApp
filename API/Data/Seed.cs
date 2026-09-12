@@ -24,14 +24,14 @@ namespace API.Data
             var admin = new AppUser
             {
                 UserName = "admin",
-                Email = "admin@nuskhaapp.com",
+                Email = "admin@RxHomeoPro.com",
                 FullName = "Admin",
                 SecurityStamp = Guid.NewGuid().ToString(),
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 PhoneNumber = "0333-4557649"
             };
 
-            var result = await userManager.CreateAsync(admin, "Nuskha123#");
+            var result = await userManager.CreateAsync(admin, "Rxhomeopro123#");
 
             if (!result.Succeeded)
             {

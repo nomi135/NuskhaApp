@@ -26,8 +26,11 @@
                     @for (symptom of symptoms; track symptom.id) {
                         <tr>
                             <td>
-                                <img [src]="baseUrl + symptom.imageUrl" [alt]="symptom.name"
+                                @if (symptom.imageUrl) {
+                                     <img [src]="baseUrl + symptom.imageUrl" [alt]="symptom.name" 
                                      class="rounded" style="width: 48px; height: 48px; object-fit: cover;">
+                                }
+                               
                             </td>
                             <td>{{ symptom.name }}</td>
                             <td>

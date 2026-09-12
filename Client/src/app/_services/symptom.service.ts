@@ -34,7 +34,9 @@ export class SymptomService {
     private buildFormData(model: SymptomForm): FormData {
       const formData = new FormData();
       formData.append('Name', model.name);
-      formData.append('Image', model.image);
+       if (model.image) {
+        formData.append('Image', model.image);
+      }
       model.diseaseIds.forEach(id => formData.append('DiseaseIds', id.toString()));
       return formData;
     }

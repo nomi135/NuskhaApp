@@ -14,3 +14,58 @@ main {
 footer {
   background-color: #f8f9fa;
 }
+
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+  --nuskha-green-light: #e8f3ec;
+}
+
+.bg-success-subtle { background-color: var(--nuskha-green-light) !important; }
+.text-success { color: var(--nuskha-green) !important; }
+
+// ===== About =====
+.about-visual {
+  background: linear-gradient(160deg, var(--nuskha-green) 0%, var(--nuskha-green-dark) 100%);
+}
+
+// ===== Services =====
+.service-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+.service-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background-color: var(--nuskha-green-light);
+  color: var(--nuskha-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+// ===== How It Works =====
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--nuskha-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.step-icon {
+  font-size: 2rem;
+  color: var(--nuskha-green);
+}
+
