@@ -15,6 +15,14 @@
                         </ng-container>
                     </div>
                 </tab>
+                 <tab heading="Medicines Management" (selectTab)="onTabActivated($event)">
+                    <div class="container">
+                        <!-- Load only when active for first time -->
+                        <ng-container *ngIf="activeTab?.heading === 'Medicines Management'">
+                            <app-medicine-management></app-medicine-management>
+                        </ng-container>
+                    </div>
+                </tab>
             </tabset>
         </div>
     </div>

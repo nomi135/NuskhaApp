@@ -1,0 +1,92 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Edit Medicine' : 'Add Medicine' }}</h5>
+    <button type="button" class="btn-close" (click)="cancel()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="medicineForm" (ngSubmit)="save()" novalidate>
+        <div class="mb-3">
+            <label class="form-label">Name <span class="text-danger">*</span></label>
+            <app-text-input
+                [formControl]="$any(medicineForm.controls['name'])"
+                [label]="'Name'">
+            </app-text-input>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Potencies</label>
+            <div class="potency-input-wrapper form-control d-flex flex-wrap align-items-center gap-2">
+                @for (potency of potencies; track potency) {
+                    <span class="badge bg-success-subtle text-success border d-flex align-items-center gap-1 py-2">
+                        {{ potency }}
+                        <button type="button" class="btn-close" style="font-size: 0.55rem;"
+                                (click)="removePotency(potency)" aria-label="Remove potency"></button>
+                    </span>
+                }
+                <input type="text" class="potency-plain-input flex-grow-1 border-0"
+                       placeholder="Type a potency and press Enter (e.g. 30, 200, 1M)"
+                       [(ngModel)]="potencyInput" [ngModelOptions]="{standalone: true}"
+                       (keydown)="onPotencyKeydown($event)" (blur)="addPotency()">
+            </div>
+            <div class="form-text">Press Enter or comma after each potency (e.g. Q, 30, 200, 1M).</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Related Symptoms</label>
+            <div class="dropdown" dropdown [autoClose]="false">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle w-100 text-start text-truncate"
+                        dropdownToggle>
+                    {{ selectedSymptomNames }}
+                </button>
+                <div *dropdownMenu class="dropdown-menu w-100 p-2" style="max-height: 280px; overflow-y: auto;">
+                    <input type="text" class="form-control form-control-sm mb-2" placeholder="Search symptoms..."
+                           [(ngModel)]="symptomSearchTerm" [ngModelOptions]="{standalone: true}"
+                           (click)="$event.stopPropagation()">
+                    <ul class="list-unstyled mb-0">
+                        @for (symptom of filteredSymptoms; track symptom.id) {
+                            <li>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" [id]="'symptom-' + symptom.id"
+                                           [checked]="isSymptomSelected(symptom.id)"
+                                           (change)="toggleSymptom(symptom.id)">
+                                    <label class="form-check-label" [for]="'symptom-' + symptom.id">
+                                        {{ symptom.name }}
+                                    </label>
+                                </div>
+                            </li>
+                        } @empty {
+                            <li class="text-muted small px-2">No symptoms match "{{ symptomSearchTerm }}".</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <app-text-input
+                [formControl]="$any(medicineForm.controls['description'])"
+                [label]="'Description'">
+            </app-text-input>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Caution</label>
+            <app-text-input
+                [formControl]="$any(medicineForm.controls['caution'])"
+                [label]="'Caution'">
+            </app-text-input>
+        </div>
+
+
+        <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn btn-success" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Save
+            </button>
+        </div>
+    </form>
+</div>

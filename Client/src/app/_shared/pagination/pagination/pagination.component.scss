@@ -1,0 +1,24 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+}
+
+.page-item.active .page-link {
+  background-color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: var(--nuskha-green-dark);
+    border-color: var(--nuskha-green-dark);
+    color: #fff;
+  }
+}
+
+.page-link {
+  color: var(--nuskha-green);
+
+  &:hover:not(:disabled) {
+    color: var(--nuskha-green-dark);
+  }
+}

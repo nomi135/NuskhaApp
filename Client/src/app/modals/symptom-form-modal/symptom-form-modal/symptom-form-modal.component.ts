@@ -3,7 +3,7 @@ import { Symptom, SymptomForm } from '../../../_models/symptom';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Disease } from '../../../_models/disease';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SymptomService } from '../../../_services/symptom.service';
 import { DiseaseService } from '../../../_services/disease.service';
 import { ToastrService } from 'ngx-toastr';
@@ -15,7 +15,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-symptom-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TextInputComponent, NgxSpinnerModule, BsDropdownModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TextInputComponent, NgxSpinnerModule, BsDropdownModule],
   templateUrl: './symptom-form-modal.component.html',
   styleUrl: './symptom-form-modal.component.scss'
 })
@@ -31,6 +31,7 @@ export class SymptomFormModalComponent implements OnInit {
   private spinnerService = inject(NgxSpinnerService);
   diseases: Disease[] = [];
   selectedDiseaseIds: number[] = [];
+  diseaseSearchTerm = '';
 
   public bsModalRef = inject(BsModalRef);
   private fb = inject(FormBuilder);
@@ -86,6 +87,12 @@ export class SymptomFormModalComponent implements OnInit {
     this.selectedDiseaseIds = this.isDiseaseSelected(id)
       ? this.selectedDiseaseIds.filter(d => d !== id)
       : [...this.selectedDiseaseIds, id];
+  }
+
+  get filteredDiseases(): Disease[] {
+    const term = this.diseaseSearchTerm.trim().toLowerCase();
+    if (!term) return this.diseases;
+    return this.diseases.filter(d => d.name.toLowerCase().includes(term));
   }
 
   get selectedDiseaseNames(): string {

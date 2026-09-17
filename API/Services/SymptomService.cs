@@ -143,6 +143,11 @@ namespace API.Services
             {
                 Id = d.Id,
                 Name = d.Name
+            }).ToList(),
+            Medicines = symptom.Medicines.Select(m => new MedicineLookupDto
+            {
+                Id = m.Id,
+                Name = m.Name
             }).ToList()
         };
     }

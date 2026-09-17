@@ -35,5 +35,8 @@ namespace API.Data
         public async Task<List<Disease>> GetDiseasesByIdsAsync(List<int> diseaseIds) =>
             await context.Diseases.Where(d => diseaseIds.Contains(d.Id)).ToListAsync();
 
+        public async Task<List<Medicine>> GetMedicinesByIdsAsync(List<int> medicineIds) =>
+            await context.Medicines.Where(m => medicineIds.Contains(m.Id)).ToListAsync();
+
     }
 }

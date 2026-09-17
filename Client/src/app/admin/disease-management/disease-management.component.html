@@ -12,6 +12,10 @@
     <div class="card border-0 shadow-sm position-relative" style="min-height: 200px;">
         <ngx-spinner type="line-scale-party" [fullScreen]="true"></ngx-spinner>
 
+        <div class="card-header bg-white border-0 pt-3">
+            <input type="text" class="form-control" style="max-width: 320px;" placeholder="Search diseases..."
+                [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+        </div>
         <div class="card-body p-0">
             <table class="table align-middle mb-0">
                 <thead class="table-light">
@@ -22,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (disease of diseases; track disease.id) {
+                    @for (disease of pagedDiseases; track disease.id) {
                         <tr>
                             <td>
                                 <img [src]="baseUrl + disease.imageUrl" [alt]="disease.name"
@@ -45,6 +49,15 @@
                     }
                 </tbody>
             </table>
+        </div>
+         <!-- Pagination -->
+        <div class="card-footer bg-white border-0 pt-3 pb-3">
+            <app-pagination
+                [totalItems]="filteredDiseases.length"
+                [pageSize]="pageSize"
+                [currentPage]="currentPage"
+                (pageChange)="onPageChange($event)">
+            </app-pagination>
         </div>
     </div>
 </div>

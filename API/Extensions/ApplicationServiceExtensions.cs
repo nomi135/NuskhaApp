@@ -24,10 +24,12 @@ namespace API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDiseaseRepository, DiseaseRepository>();
             services.AddScoped<ISymptomRepository, SymptomRepository>();
+            services.AddScoped<IMedicineRepository, MedicineRepository>();
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<ISymptomService, SymptomService>();
+            services.AddScoped<IMedicineService, MedicineService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

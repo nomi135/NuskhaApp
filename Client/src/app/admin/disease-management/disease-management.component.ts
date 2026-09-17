@@ -6,11 +6,14 @@ import { Disease } from '../../_models/disease';
 import { DiseaseFormModalComponent } from '../../modals/disease-form-modal/disease-form-modal/disease-form-modal.component';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
 
 @Component({
   selector: 'app-disease-management',
   standalone: true,
-  imports: [NgxSpinnerModule],
+  imports: [NgxSpinnerModule, CommonModule, FormsModule, PaginationComponent],
   templateUrl: './disease-management.component.html',
   styleUrl: './disease-management.component.scss'
 })
@@ -22,6 +25,9 @@ export class DiseaseManagementComponent implements OnInit {
   baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
   diseases: Disease[] = [];
   bsModalRef?: BsModalRef;
+  searchTerm = '';
+  currentPage = 1;
+  pageSize = 10;
 
   ngOnInit(): void {
     this.loadDiseases();
@@ -36,6 +42,7 @@ export class DiseaseManagementComponent implements OnInit {
     this.diseaseService.getDiseases().subscribe({
       next: (diseases) => {
         this.diseases = diseases;
+        this.clampCurrentPage();
         this.spinnerService.hide();
       },
       error: (err) => {
@@ -44,6 +51,32 @@ export class DiseaseManagementComponent implements OnInit {
         this.spinnerService.hide();
       }
     });
+  }
+
+  get filteredDiseases(): Disease[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) return this.diseases;
+    return this.diseases.filter(d => d.name.toLowerCase().includes(term));
+  }
+
+  get pagedDiseases(): Disease[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredDiseases.slice(start, start + this.pageSize);
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
+  private clampCurrentPage(): void {
+    const totalPages = Math.max(1, Math.ceil(this.filteredDiseases.length / this.pageSize));
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages;
+    }
   }
 
   openAddModal(): void {

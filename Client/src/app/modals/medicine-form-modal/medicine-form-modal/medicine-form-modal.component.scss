@@ -1,0 +1,30 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+}
+
+.btn-success {
+  background-color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover:not(:disabled) {
+    background-color: var(--nuskha-green-dark);
+    border-color: var(--nuskha-green-dark);
+  }
+}
+
+.potency-input-wrapper {
+  height: auto;
+  min-height: calc(1.5em + 1rem + 2px);
+
+  .potency-plain-input {
+    min-width: 160px;
+    outline: none;
+    box-shadow: none;
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
