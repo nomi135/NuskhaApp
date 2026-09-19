@@ -4,11 +4,12 @@ import { NgIf } from '@angular/common';
 import { DiseaseManagementComponent } from "../disease-management/disease-management.component";
 import { SymptomManagementComponent } from '../symptom-management/symptom-management.component';
 import { MedicineManagementComponent } from '../medicine-management/medicine-management.component';
+import { DoctorManagementComponent } from '../doctor-management/doctor-management.component';
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [TabsModule, NgIf, DiseaseManagementComponent, SymptomManagementComponent, MedicineManagementComponent],
+  imports: [TabsModule, NgIf, DiseaseManagementComponent, SymptomManagementComponent, DoctorManagementComponent, MedicineManagementComponent],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.scss'
 })

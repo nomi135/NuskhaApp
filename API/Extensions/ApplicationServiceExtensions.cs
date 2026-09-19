@@ -14,22 +14,18 @@ namespace API.Extensions
             {
                 opt.UseSqlServer(config.GetConnectionString("dbConnection"));
             });
-
-            //Register IHttpContextAccessor first
-            services.AddHttpContextAccessor(); // cannot use IHttpContextAccessor due to hangfire
-            //Register HttpClient
-            services.AddScoped<HttpClient>();
-            //Register other services
             services.AddMemoryCache();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDiseaseRepository, DiseaseRepository>();
             services.AddScoped<ISymptomRepository, SymptomRepository>();
             services.AddScoped<IMedicineRepository, MedicineRepository>();
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<ISymptomService, SymptomService>();
             services.AddScoped<IMedicineService, MedicineService>();
+            services.AddScoped<IDoctorService, DoctorService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

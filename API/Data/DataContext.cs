@@ -12,6 +12,7 @@ namespace API.Data
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Symptom> Symptoms { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -40,6 +41,10 @@ namespace API.Data
             builder.Entity<Medicine>()
            .HasIndex(m => m.Name)
            .IsUnique();
+
+           builder.Entity<Doctor>()
+          .HasIndex(d => d.Name)
+          .IsUnique();
 
             // Many-to-many: EF Core auto-generates the join table "DiseaseSymptom"
             builder.Entity<Disease>()

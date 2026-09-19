@@ -9,6 +9,7 @@ import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { DiseaseManagementComponent } from './admin/disease-management/disease-management.component';
 import { SymptomManagementComponent } from './admin/symptom-management/symptom-management.component';
 import { MedicineManagementComponent } from './admin/medicine-management/medicine-management.component';
+import { DoctorManagementComponent } from './admin/doctor-management/doctor-management.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -19,6 +20,7 @@ export const routes: Routes = [
         children: [
              {path: 'disease', component: DiseaseManagementComponent, canActivate: [adminGuard]},
              {path: 'symptom', component: SymptomManagementComponent, canActivate: [adminGuard]},
+             {path: 'doctor', component: DoctorManagementComponent, canActivate: [adminGuard]},
              {path: 'medicine', component: MedicineManagementComponent, canActivate: [adminGuard]},
              {path: 'admin', component: AdminPanelComponent, canActivate: [adminGuard]}
         ]

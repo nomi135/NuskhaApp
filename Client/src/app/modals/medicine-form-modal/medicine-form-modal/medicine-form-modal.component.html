@@ -4,6 +4,9 @@
 </div>
 
 <div class="modal-body">
+    <ngx-spinner name="disease-form-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                 size="medium" color="#1b5e3f" type="ball-clip-rotate">
+    </ngx-spinner>
     <form [formGroup]="medicineForm" (ngSubmit)="save()" novalidate>
         <div class="mb-3">
             <label class="form-label">Name <span class="text-danger">*</span></label>

@@ -3,12 +3,13 @@
 namespace API.Data
 {
     public class UnitOfWork(DataContext context, IUserRepository userRepository, IDiseaseRepository diseaseRepository, 
-                            ISymptomRepository symptomRepository, IMedicineRepository medicineRepository) : IUnitOfWork
+                            ISymptomRepository symptomRepository, IMedicineRepository medicineRepository, IDoctorRepository doctorRepository) : IUnitOfWork
     {
         public IUserRepository UserRepository => userRepository;
         public IDiseaseRepository DiseaseRepository => diseaseRepository;
         public ISymptomRepository SymptomRepository => symptomRepository;
         public IMedicineRepository MedicineRepository => medicineRepository;
+        public IDoctorRepository DoctorRepository => doctorRepository;
 
         public async Task<bool> Complete()
         {

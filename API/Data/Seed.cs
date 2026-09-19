@@ -24,7 +24,7 @@ namespace API.Data
             var admin = new AppUser
             {
                 UserName = "admin",
-                Email = "admin@RxHomeoPro.com",
+                Email = "admin@rxhomeopro.pk",
                 FullName = "Admin",
                 SecurityStamp = Guid.NewGuid().ToString(),
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
