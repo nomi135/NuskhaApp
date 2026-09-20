@@ -17,59 +17,104 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Potencies</label>
-            <div class="potency-input-wrapper form-control d-flex flex-wrap align-items-center gap-2">
-                @for (potency of potencies; track potency) {
-                    <span class="badge bg-success-subtle text-success border d-flex align-items-center gap-1 py-2">
-                        {{ potency }}
-                        <button type="button" class="btn-close" style="font-size: 0.55rem;"
-                                (click)="removePotency(potency)" aria-label="Remove potency"></button>
-                    </span>
-                }
-                <input type="text" class="potency-plain-input flex-grow-1 border-0"
-                       placeholder="Type a potency and press Enter (e.g. 30, 200, 1M)"
-                       [(ngModel)]="potencyInput" [ngModelOptions]="{standalone: true}"
-                       (keydown)="onPotencyKeydown($event)" (blur)="addPotency()">
-            </div>
-            <div class="form-text">Press Enter or comma after each potency (e.g. Q, 30, 200, 1M).</div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Related Symptoms</label>
+            <label class="form-label">Doctors</label>
             <div class="dropdown" dropdown [autoClose]="false">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle w-100 text-start text-truncate"
                         dropdownToggle>
-                    {{ selectedSymptomNames }}
+                    {{ selectedDoctorNames }}
                 </button>
                 <div *dropdownMenu class="dropdown-menu w-100 p-2" style="max-height: 280px; overflow-y: auto;">
-                    <input type="text" class="form-control form-control-sm mb-2" placeholder="Search symptoms..."
-                           [(ngModel)]="symptomSearchTerm" [ngModelOptions]="{standalone: true}"
+                    <input type="text" class="form-control form-control-sm mb-2" placeholder="Search doctors..."
+                           [(ngModel)]="doctorSearchTerm" [ngModelOptions]="{standalone: true}"
                            (click)="$event.stopPropagation()">
                     <ul class="list-unstyled mb-0">
-                        @for (symptom of filteredSymptoms; track symptom.id) {
+                        @for (doctor of filteredDoctors; track doctor.id) {
                             <li>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" [id]="'symptom-' + symptom.id"
-                                           [checked]="isSymptomSelected(symptom.id)"
-                                           (change)="toggleSymptom(symptom.id)">
-                                    <label class="form-check-label" [for]="'symptom-' + symptom.id">
-                                        {{ symptom.name }}
+                                    <input type="checkbox" class="form-check-input" [id]="'doctor-' + doctor.id"
+                                           [checked]="isDoctorSelected(doctor.id)"
+                                           (change)="toggleDoctor(doctor.id)">
+                                    <label class="form-check-label" [for]="'doctor-' + doctor.id">
+                                        {{ doctor.name }}
                                     </label>
                                 </div>
                             </li>
                         } @empty {
-                            <li class="text-muted small px-2">No symptoms match "{{ symptomSearchTerm }}".</li>
+                            <li class="text-muted small px-2">No doctors match "{{ doctorSearchTerm }}".</li>
                         }
                     </ul>
                 </div>
             </div>
+            <div class="form-text">Select the doctors this medicine is prescribed by, then set potencies and symptoms for each below.</div>
         </div>
+
+        @if (selectedDoctors.length > 0) {
+            <hr class="my-4">
+            <label class="form-label mb-3">Doctor-Specific Potencies &amp; Symptoms</label>
+
+            @for (doctor of selectedDoctors; track doctor.id) {
+                <div class="doctor-link-card border rounded-3 p-3 mb-3">
+                    <h6 class="fw-semibold mb-3">{{ doctor.name }}</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Potencies</label>
+                        <div class="potency-input-wrapper form-control form-control-sm d-flex flex-wrap align-items-center gap-2">
+                            @for (potency of getRowData(doctor.id).potencies; track potency) {
+                                <span class="badge bg-success-subtle text-success border d-flex align-items-center gap-1 py-2">
+                                    {{ potency }}
+                                    <button type="button" class="btn-close" style="font-size: 0.5rem;"
+                                            (click)="removePotency(getRowData(doctor.id), potency)" aria-label="Remove potency"></button>
+                                </span>
+                            }
+                            <input type="text" class="potency-plain-input flex-grow-1 border-0"
+                                   placeholder="Type a potency and press Enter (e.g. 30, 200, 1M)"
+                                   [(ngModel)]="getRowData(doctor.id).potencyInput" [ngModelOptions]="{standalone: true}"
+                                   (keydown)="onPotencyKeydown($event, getRowData(doctor.id))"
+                                   (blur)="addPotency(getRowData(doctor.id))">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label small">Related Symptoms</label>
+                        <div class="dropdown" dropdown [autoClose]="false">
+                            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle w-100 text-start text-truncate"
+                                    dropdownToggle>
+                                {{ selectedSymptomNames(getRowData(doctor.id)) }}
+                            </button>
+                            <div *dropdownMenu class="dropdown-menu w-100 p-2" style="max-height: 240px; overflow-y: auto;">
+                                <input type="text" class="form-control form-control-sm mb-2" placeholder="Search symptoms..."
+                                       [(ngModel)]="getRowData(doctor.id).symptomSearchTerm" [ngModelOptions]="{standalone: true}"
+                                       (click)="$event.stopPropagation()">
+                                <ul class="list-unstyled mb-0">
+                                    @for (symptom of filteredSymptoms(getRowData(doctor.id)); track symptom.id) {
+                                        <li>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input"
+                                                       [id]="'symptom-' + doctor.id + '-' + symptom.id"
+                                                       [checked]="isSymptomSelected(getRowData(doctor.id), symptom.id)"
+                                                       (change)="toggleSymptom(getRowData(doctor.id), symptom.id)">
+                                                <label class="form-check-label" [for]="'symptom-' + doctor.id + '-' + symptom.id">
+                                                    {{ symptom.name }}
+                                                </label>
+                                            </div>
+                                        </li>
+                                    } @empty {
+                                        <li class="text-muted small px-2">No symptoms match "{{ getRowData(doctor.id).symptomSearchTerm }}".</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
 
         <div class="mb-3">
             <label class="form-label">Description</label>
             <app-text-input
                 [formControl]="$any(medicineForm.controls['description'])"
-                [label]="'Description'">
+                [label]="'Description'"
+                [type]="'text'">
             </app-text-input>
         </div>
 
@@ -77,10 +122,10 @@
             <label class="form-label">Caution</label>
             <app-text-input
                 [formControl]="$any(medicineForm.controls['caution'])"
-                [label]="'Caution'">
+                [label]="'Caution'"
+                [type]="'text'">
             </app-text-input>
         </div>
-
 
         <div class="modal-footer px-0 pb-0">
             <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>

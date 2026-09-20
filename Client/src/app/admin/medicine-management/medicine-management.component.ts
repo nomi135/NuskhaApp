@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MedicineFormModalComponent } from '../../modals/medicine-form-modal/medicine-form-modal/medicine-form-modal.component';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
+import { SymptomLookup } from '../../_models/symptom-lookup';
 
 @Component({
   selector: 'app-medicine-management',
@@ -103,6 +104,7 @@ export class MedicineManagementComponent implements OnInit {
     });
     this.medicineService.deleteMedicine(medicine.id).subscribe({
       next: () => {
+        this.spinnerService.hide();
         this.loadMedicines();
         this.toastr.success('Medicine deleted successfully');
       },
@@ -111,6 +113,21 @@ export class MedicineManagementComponent implements OnInit {
         this.toastr.error(err);
       }
     });
+  }
+
+  uniquePotencies(medicine: Medicine): string[] {
+    const all = medicine.doctorLinks.flatMap(link => link.potencies);
+    return Array.from(new Set(all));
+  }
+
+  uniqueSymptoms(medicine: Medicine): SymptomLookup[] {
+    const seen = new Map<number, SymptomLookup>();
+    medicine.doctorLinks.forEach(link => {
+      link.symptoms.forEach(s => {
+        if (!seen.has(s.id)) seen.set(s.id, s);
+      });
+    });
+    return Array.from(seen.values());
   }
 
 }

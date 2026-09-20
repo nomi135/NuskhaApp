@@ -1,20 +1,29 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Medicine, MedicineForm } from '../../../_models/medicine';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MedicineService } from '../../../_services/medicine.service';
-import { SymptomService } from '../../../_services/symptom.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { Medicine, MedicineDoctorLinkForm, MedicineForm } from '../../../_models/medicine';
 import { Symptom } from '../../../_models/symptom';
-import { CommonModule } from '@angular/common';
+import { Doctor } from '../../../_models/doctor';
+import { MedicineService } from '../../../_services/medicine.service';
+import { SymptomService } from '../../../_services/symptom.service';
+import { DoctorService } from '../../../_services/doctor.service';
 import { TextInputComponent } from '../../../_forms/text-input/text-input.component';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+
+interface DoctorLinkData {
+  potencies: string[];
+  potencyInput: string;
+  selectedSymptomIds: number[];
+  symptomSearchTerm: string;
+}
 
 @Component({
   selector: 'app-medicine-form-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TextInputComponent, NgxSpinnerModule, BsDropdownModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TextInputComponent, BsDropdownModule, NgxSpinnerModule],
   templateUrl: './medicine-form-modal.component.html',
   styleUrl: './medicine-form-modal.component.scss'
 })
@@ -26,6 +35,7 @@ export class MedicineFormModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private medicineService = inject(MedicineService);
   private symptomService = inject(SymptomService);
+  private doctorService = inject(DoctorService);
   private spinnerService = inject(NgxSpinnerService);
   private toastr = inject(ToastrService);
 
@@ -35,18 +45,19 @@ export class MedicineFormModalComponent implements OnInit {
     caution: ['']
   });
 
-  potencies: string[] = [];
-  potencyInput = '';
-
+  doctors: Doctor[] = [];
   symptoms: Symptom[] = [];
-  selectedSymptomIds: number[] = [];
-  symptomSearchTerm = '';
+
+  selectedDoctorIds: number[] = [];
+  doctorSearchTerm = '';
+  private doctorLinkData = new Map<number, DoctorLinkData>();
 
   submitted = false;
   isSubmitting = false;
   successMessage: string | null = null;
 
   ngOnInit(): void {
+    this.loadDoctors();
     this.loadSymptoms();
 
     if (this.medicine) {
@@ -55,8 +66,16 @@ export class MedicineFormModalComponent implements OnInit {
         description: this.medicine.description ?? '',
         caution: this.medicine.caution ?? ''
       });
-      this.potencies = [...this.medicine.potencies];
-      this.selectedSymptomIds = this.medicine.symptoms.map(s => s.id);
+
+      this.selectedDoctorIds = this.medicine.doctorLinks.map(link => link.doctorId);
+      this.medicine.doctorLinks.forEach(link => {
+        this.doctorLinkData.set(link.doctorId, {
+          potencies: [...link.potencies],
+          potencyInput: '',
+          selectedSymptomIds: link.symptoms.map(s => s.id),
+          symptomSearchTerm: ''
+        });
+      });
     }
   }
 
@@ -64,67 +83,111 @@ export class MedicineFormModalComponent implements OnInit {
     return !!this.medicine;
   }
 
+  loadDoctors(): void {
+    this.doctorService.getDoctors().subscribe({
+      next: (doctors) => this.doctors = doctors,
+      error: (err) => this.toastr.error(err)
+    });
+  }
+
   loadSymptoms(): void {
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
     this.symptomService.getSymptoms().subscribe({
-      next: (symptoms) => {
-        this.symptoms = symptoms;
-        this.spinnerService.hide();
-      },
-      error: (err) => {
-        this.spinnerService.hide();
-        this.toastr.error(err);
-      }
+      next: (symptoms) => this.symptoms = symptoms,
+      error: (err) => this.toastr.error(err)
     });
   }
 
-  addPotency(): void {
-    const value = this.potencyInput.trim();
-    if (value && !this.potencies.includes(value)) {
-      this.potencies = [...this.potencies, value];
+  // ===== Doctors multiselect =====
+  get filteredDoctors(): Doctor[] {
+    const term = this.doctorSearchTerm.trim().toLowerCase();
+    if (!term) return this.doctors;
+    return this.doctors.filter(d => d.name.toLowerCase().includes(term));
+  }
+
+  get selectedDoctorNames(): string {
+    if (this.selectedDoctorIds.length === 0) return 'Select doctors';
+    return this.doctors
+      .filter(d => this.selectedDoctorIds.includes(d.id))
+      .map(d => d.name)
+      .join(', ');
+  }
+
+  get selectedDoctors(): Doctor[] {
+    return this.doctors.filter(d => this.selectedDoctorIds.includes(d.id));
+  }
+
+  isDoctorSelected(id: number): boolean {
+    return this.selectedDoctorIds.includes(id);
+  }
+
+  toggleDoctor(id: number): void {
+    if (this.isDoctorSelected(id)) {
+      this.selectedDoctorIds = this.selectedDoctorIds.filter(d => d !== id);
+    } else {
+      this.selectedDoctorIds = [...this.selectedDoctorIds, id];
+      this.ensureRowData(id);
     }
-    this.potencyInput = '';
   }
 
-  removePotency(value: string): void {
-    this.potencies = this.potencies.filter(p => p !== value);
+  private ensureRowData(doctorId: number): DoctorLinkData {
+    let data = this.doctorLinkData.get(doctorId);
+    if (!data) {
+      data = { potencies: [], potencyInput: '', selectedSymptomIds: [], symptomSearchTerm: '' };
+      this.doctorLinkData.set(doctorId, data);
+    }
+    return data;
   }
 
-  onPotencyKeydown(event: KeyboardEvent): void {
+  getRowData(doctorId: number): DoctorLinkData {
+    return this.ensureRowData(doctorId);
+  }
+
+  // ===== Potencies (per doctor) =====
+  addPotency(row: DoctorLinkData): void {
+    const value = row.potencyInput.trim();
+    if (value && !row.potencies.includes(value)) {
+      row.potencies = [...row.potencies, value];
+    }
+    row.potencyInput = '';
+  }
+
+  removePotency(row: DoctorLinkData, value: string): void {
+    row.potencies = row.potencies.filter(p => p !== value);
+  }
+
+  onPotencyKeydown(event: KeyboardEvent, row: DoctorLinkData): void {
     if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault();
-      this.addPotency();
+      this.addPotency(row);
     }
   }
 
-  get filteredSymptoms(): Symptom[] {
-    const term = this.symptomSearchTerm.trim().toLowerCase();
+  // ===== Symptoms (per doctor) =====
+  filteredSymptoms(row: DoctorLinkData): Symptom[] {
+    const term = row.symptomSearchTerm.trim().toLowerCase();
     if (!term) return this.symptoms;
     return this.symptoms.filter(s => s.name.toLowerCase().includes(term));
   }
 
-  isSymptomSelected(id: number): boolean {
-    return this.selectedSymptomIds.includes(id);
+  isSymptomSelected(row: DoctorLinkData, id: number): boolean {
+    return row.selectedSymptomIds.includes(id);
   }
 
-  toggleSymptom(id: number): void {
-    this.selectedSymptomIds = this.isSymptomSelected(id)
-      ? this.selectedSymptomIds.filter(s => s !== id)
-      : [...this.selectedSymptomIds, id];
+  toggleSymptom(row: DoctorLinkData, id: number): void {
+    row.selectedSymptomIds = this.isSymptomSelected(row, id)
+      ? row.selectedSymptomIds.filter(s => s !== id)
+      : [...row.selectedSymptomIds, id];
   }
 
-  get selectedSymptomNames(): string {
-    if (this.selectedSymptomIds.length === 0) return 'Select symptoms';
+  selectedSymptomNames(row: DoctorLinkData): string {
+    if (row.selectedSymptomIds.length === 0) return 'Select symptoms';
     return this.symptoms
-      .filter(s => this.selectedSymptomIds.includes(s.id))
+      .filter(s => row.selectedSymptomIds.includes(s.id))
       .map(s => s.name)
       .join(', ');
   }
 
+  // ===== Save =====
   save(): void {
     this.submitted = true;
 
@@ -136,16 +199,24 @@ export class MedicineFormModalComponent implements OnInit {
     this.isSubmitting = true;
     this.spinnerService.show(undefined, {
       type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
+      bdColor: 'rgba(255,255,255,0)',
       color: '#333333'
+    });
+
+    const doctorLinks: MedicineDoctorLinkForm[] = this.selectedDoctorIds.map(doctorId => {
+      const row = this.getRowData(doctorId);
+      return {
+        doctorId,
+        potencies: row.potencies,
+        symptomIds: row.selectedSymptomIds
+      };
     });
 
     const model: MedicineForm = {
       name: this.medicineForm.value.name,
       description: this.medicineForm.value.description || undefined,
       caution: this.medicineForm.value.caution || undefined,
-      potencies: this.potencies,
-      symptomIds: this.selectedSymptomIds
+      doctorLinks
     };
 
     const request$ = this.isEditMode
@@ -171,8 +242,7 @@ export class MedicineFormModalComponent implements OnInit {
     });
   }
 
-   cancel(): void {
+  cancel(): void {
     this.bsModalRef.hide();
   }
-
 }

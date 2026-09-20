@@ -13,12 +13,27 @@
   }
 }
 
+.btn-outline-success {
+  color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+    color: #fff;
+  }
+}
+
+.doctor-link-card {
+  background-color: #fafafa;
+}
+
 .potency-input-wrapper {
   height: auto;
-  min-height: calc(1.5em + 1rem + 2px);
+  min-height: calc(1.5em + 0.5rem + 2px);
 
   .potency-plain-input {
-    min-width: 160px;
+    min-width: 140px;
     outline: none;
     box-shadow: none;
 

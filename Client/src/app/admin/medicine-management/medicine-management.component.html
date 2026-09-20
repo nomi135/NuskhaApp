@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1">Medicine Management</h2>
-            <p class="text-muted mb-0">Manage homeopathic medicines and the symptoms they treat.</p>
+            <p class="text-muted mb-0">Manage homeopathic medicines and the doctors, potencies, and symptoms they're linked to.</p>
         </div>
         <button class="btn btn-success" (click)="openAddModal()">
             <i class="bi bi-plus-lg me-1"></i>Add Medicine
@@ -19,8 +19,9 @@
                 <thead class="table-light">
                     <tr>
                         <th>Name</th>
+                        <th>Linked Doctors</th>
                         <th>Potencies</th>
-                        <th>Related Symptoms</th>
+                        <th>Symptoms</th>
                         <th class="text-end" style="width: 160px;">Actions</th>
                     </tr>
                 </thead>
@@ -36,17 +37,24 @@
                                 }
                             </td>
                             <td>
-                                @for (potency of medicine.potencies; track potency) {
+                                @for (link of medicine.doctorLinks; track link.doctorId) {
+                                    <span class="badge bg-light text-success border me-1 mb-1">{{ link.doctorName }}</span>
+                                } @empty {
+                                    <span class="text-muted small">None linked</span>
+                                }
+                            </td>
+                            <td>
+                                @for (potency of uniquePotencies(medicine); track potency) {
                                     <span class="badge bg-light text-dark border me-1 mb-1">{{ potency }}</span>
                                 } @empty {
                                     <span class="text-muted small">—</span>
                                 }
                             </td>
                             <td>
-                                @for (symptom of medicine.symptoms; track symptom.id) {
-                                    <span class="badge bg-light text-success border me-1 mb-1">{{ symptom.name }}</span>
+                                @for (symptom of uniqueSymptoms(medicine); track symptom.id) {
+                                    <span class="badge bg-light text-secondary border me-1 mb-1">{{ symptom.name }}</span>
                                 } @empty {
-                                    <span class="text-muted small">None linked</span>
+                                    <span class="text-muted small">—</span>
                                 }
                             </td>
                             <td class="text-end">
