@@ -13,6 +13,7 @@ namespace API.Data
         public DbSet<Symptom> Symptoms { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<MedicineDoctor> MedicineDoctors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -52,15 +53,34 @@ namespace API.Data
                 .WithMany(s => s.Diseases)
                 .UsingEntity(j => j.ToTable("DiseaseSymptom"));
 
-            // Symptom <-> Medicine many-to-many
-            builder.Entity<Symptom>()
-                .HasMany(s => s.Medicines)
-                .WithMany(m => m.Symptoms)
-                .UsingEntity(j => j.ToTable("SymptomMedicine"));
+            // Medicine -> MedicineDoctor (one medicine has many per-doctor links)
+            builder.Entity<MedicineDoctor>()
+                .HasOne(md => md.Medicine)
+                .WithMany(m => m.MedicineDoctors)
+                .HasForeignKey(md => md.MedicineId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Medicine.Potencies: store List<string> as a single comma-separated column
-            builder.Entity<Medicine>()
-                .Property(m => m.Potencies)
+            // Doctor -> MedicineDoctor (one doctor has many per-medicine links)
+            builder.Entity<MedicineDoctor>()
+                .HasOne(md => md.Doctor)
+                .WithMany(d => d.MedicineDoctors)
+                .HasForeignKey(md => md.DoctorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // A given Medicine can only be linked to a given Doctor once
+            builder.Entity<MedicineDoctor>()
+                .HasIndex(md => new { md.MedicineId, md.DoctorId })
+                .IsUnique();
+
+            // MedicineDoctor <-> Symptom many-to-many (each doctor's own symptom list for that medicine)
+            builder.Entity<MedicineDoctor>()
+                .HasMany(md => md.Symptoms)
+                .WithMany(s => s.MedicineDoctors)
+                .UsingEntity(j => j.ToTable("MedicineDoctorSymptom"));
+
+            // MedicineDoctor.Potencies: store List<string> as a single comma-separated column
+            builder.Entity<MedicineDoctor>()
+                .Property(md => md.Potencies)
                 .HasConversion(
                     v => string.Join(',', v),
                     v => v.Length == 0

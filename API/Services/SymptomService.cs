@@ -59,7 +59,7 @@ namespace API.Services
             if (await unitOfWork.SymptomRepository.NameExistsAsync(dto.Name, id))
                 throw new InvalidOperationException($"A symptom named '{dto.Name}' already exists.");
 
-            if(dto.Image != null)
+            if (dto.Image != null)
             {
                 var oldImagePath = symptom.ImagePath;
                 var newImagePath = await SaveImageAsync(dto.Image, dto.Name);
@@ -138,17 +138,17 @@ namespace API.Services
         {
             Id = symptom.Id,
             Name = symptom.Name,
-            ImageUrl = symptom.ImagePath,
+            ImageUrl = symptom.ImagePath ?? string.Empty,
             Diseases = symptom.Diseases.Select(d => new DiseaseLookupDto
             {
                 Id = d.Id,
                 Name = d.Name
             }).ToList(),
-            Medicines = symptom.Medicines.Select(m => new MedicineLookupDto
-            {
-                Id = m.Id,
-                Name = m.Name
-            }).ToList()
+            Medicines = symptom.MedicineDoctors
+        .Select(md => md.Medicine)
+        .DistinctBy(m => m.Id)
+        .Select(m => new MedicineLookupDto { Id = m.Id, Name = m.Name })
+        .ToList()
         };
     }
 }

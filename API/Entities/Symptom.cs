@@ -9,7 +9,8 @@
         // Many-to-many: a symptom can belong to many diseases
         public ICollection<Disease> Diseases { get; set; } = [];
 
-        // Many-to-many: a symptom can have multiple medicines
-        public ICollection<Medicine> Medicines { get; set; } = [];
+        // A symptom is now linked to medicines through a specific doctor's entry,
+        // not directly to Medicine
+        public ICollection<MedicineDoctor> MedicineDoctors { get; set; } = [];
     }
 }

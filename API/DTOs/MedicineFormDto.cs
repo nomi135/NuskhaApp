@@ -10,10 +10,7 @@ namespace API.DTOs
         public string? Description { get; set; }
         public string? Caution { get; set; }
 
-        public List<string> Potencies { get; set; } = [];
-
-        // IDs of symptoms this medicine treats. Optional — a medicine can exist
-        // before being linked to any symptom.
-        public List<int> SymptomIds { get; set; } = [];
+        // One entry per doctor this medicine is linked to, each with its own potencies + symptoms
+        public List<MedicineDoctorLinkFormDto> DoctorLinks { get; set; } = [];
     }
 }

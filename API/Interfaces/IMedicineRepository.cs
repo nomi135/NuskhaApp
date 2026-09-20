@@ -7,6 +7,7 @@ namespace API.Interfaces
         Task<IEnumerable<Medicine>> GetMedicinesAsync();
         Task<Medicine?> GetMedicineByIdAsync(int id);
         Task<bool> NameExistsAsync(string name, int? excludeId = null);
+        Task<List<Doctor>> GetDoctorsByIdsAsync(List<int> doctorIds);
         Task<List<Symptom>> GetSymptomsByIdsAsync(List<int> symptomIds);
         void AddMedicine(Medicine medicine);
         void UpdateMedicine(Medicine medicine);

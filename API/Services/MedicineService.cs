@@ -26,20 +26,16 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         if (await unitOfWork.MedicineRepository.NameExistsAsync(dto.Name))
             throw new InvalidOperationException($"A medicine named '{dto.Name}' already exists.");
 
+        ValidateDoctorLinks(dto.DoctorLinks);
+
         var medicine = new Medicine
         {
             Name = dto.Name.Trim(),
             Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
-            Caution = string.IsNullOrWhiteSpace(dto.Caution) ? null : dto.Caution.Trim(),
-            Potencies = dto.Potencies
+            Caution = string.IsNullOrWhiteSpace(dto.Caution) ? null : dto.Caution.Trim()
         };
 
-        if (dto.SymptomIds.Count > 0)
-        {
-            var symptoms = await unitOfWork.MedicineRepository.GetSymptomsByIdsAsync(dto.SymptomIds);
-            foreach (var symptom in symptoms)
-                medicine.Symptoms.Add(symptom);
-        }
+        await AddDoctorLinksAsync(medicine, dto.DoctorLinks);
 
         unitOfWork.MedicineRepository.AddMedicine(medicine);
 
@@ -57,19 +53,16 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         if (await unitOfWork.MedicineRepository.NameExistsAsync(dto.Name, id))
             throw new InvalidOperationException($"A medicine named '{dto.Name}' already exists.");
 
+        ValidateDoctorLinks(dto.DoctorLinks);
+
         medicine.Name = dto.Name.Trim();
         medicine.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
         medicine.Caution = string.IsNullOrWhiteSpace(dto.Caution) ? null : dto.Caution.Trim();
-        medicine.Potencies = dto.Potencies;
 
-        // Full replace of symptom links, same convention as Symptom <-> Disease updates
-        medicine.Symptoms.Clear();
-        if (dto.SymptomIds.Count > 0)
-        {
-            var symptoms = await unitOfWork.MedicineRepository.GetSymptomsByIdsAsync(dto.SymptomIds);
-            foreach (var symptom in symptoms)
-                medicine.Symptoms.Add(symptom);
-        }
+        // Full replace: each doctor link carries its own potencies + symptoms,
+        // so on update we drop all existing links and rebuild from what was submitted
+        medicine.MedicineDoctors.Clear();
+        await AddDoctorLinksAsync(medicine, dto.DoctorLinks);
 
         unitOfWork.MedicineRepository.UpdateMedicine(medicine);
 
@@ -92,17 +85,64 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         return true;
     }
 
+    private static void ValidateDoctorLinks(List<MedicineDoctorLinkFormDto> links)
+    {
+        var duplicateDoctorIds = links
+            .GroupBy(l => l.DoctorId)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+
+        if (duplicateDoctorIds.Count > 0)
+            throw new InvalidOperationException("Each doctor can only be linked once per medicine.");
+    }
+
+    private async Task AddDoctorLinksAsync(Medicine medicine, List<MedicineDoctorLinkFormDto> links)
+    {
+        if (links.Count == 0) return;
+
+        var doctorIds = links.Select(l => l.DoctorId).Distinct().ToList();
+        var doctors = await unitOfWork.MedicineRepository.GetDoctorsByIdsAsync(doctorIds);
+        var doctorsById = doctors.ToDictionary(d => d.Id);
+
+        foreach (var link in links)
+        {
+            if (!doctorsById.TryGetValue(link.DoctorId, out var doctor))
+                throw new InvalidOperationException($"Doctor with id {link.DoctorId} was not found.");
+
+            var medicineDoctor = new MedicineDoctor
+            {
+                Doctor = doctor,
+                Potencies = link.Potencies
+            };
+
+            if (link.SymptomIds.Count > 0)
+            {
+                var symptoms = await unitOfWork.MedicineRepository.GetSymptomsByIdsAsync(link.SymptomIds);
+                foreach (var symptom in symptoms)
+                    medicineDoctor.Symptoms.Add(symptom);
+            }
+
+            medicine.MedicineDoctors.Add(medicineDoctor);
+        }
+    }
+
     private static MedicineDto MapToDto(Medicine medicine) => new()
     {
         Id = medicine.Id,
         Name = medicine.Name,
         Description = medicine.Description,
         Caution = medicine.Caution,
-        Potencies = medicine.Potencies,
-        Symptoms = medicine.Symptoms.Select(s => new SymptomLookupDto
+        DoctorLinks = medicine.MedicineDoctors.Select(md => new MedicineDoctorLinkDto
         {
-            Id = s.Id,
-            Name = s.Name
+            DoctorId = md.DoctorId,
+            DoctorName = md.Doctor.Name,
+            Potencies = md.Potencies,
+            Symptoms = md.Symptoms.Select(s => new SymptomLookupDto
+            {
+                Id = s.Id,
+                Name = s.Name
+            }).ToList()
         }).ToList()
     };
 }
