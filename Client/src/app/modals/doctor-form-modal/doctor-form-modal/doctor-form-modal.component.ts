@@ -23,6 +23,7 @@ export class DoctorFormModalComponent implements OnInit{
   private fb = inject(FormBuilder);
   private doctorService = inject(DoctorService);
   private spinnerService = inject(NgxSpinnerService);
+  private readonly spinnerName = 'doctor-form-spinner';
   private toastr = inject(ToastrService);
 
   doctorForm: FormGroup = this.fb.group({
@@ -49,11 +50,7 @@ export class DoctorFormModalComponent implements OnInit{
     }
 
     this.isSubmitting = true;
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(255,255,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
 
     const model: DoctorForm = {
       name: this.doctorForm.value.name
@@ -66,7 +63,7 @@ export class DoctorFormModalComponent implements OnInit{
     request$.subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.saved.emit();
         this.successMessage = this.isEditMode
           ? 'Doctor updated successfully.'
@@ -77,7 +74,7 @@ export class DoctorFormModalComponent implements OnInit{
       error: (err) => {
         this.toastr.error(err);
         this.isSubmitting = false;
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       }
     });
   }

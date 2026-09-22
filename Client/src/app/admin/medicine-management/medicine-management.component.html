@@ -9,12 +9,14 @@
         </button>
     </div>
     <div class="card border-0 shadow-sm position-relative" style="min-height: 200px;">
-        <ngx-spinner type="line-scale-party" [fullScreen]="true"></ngx-spinner>
         <div class="card-header bg-white border-0 pt-3">
             <input type="text" class="form-control" style="max-width: 320px;" placeholder="Search medicines..."
             [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
         </div>
         <div class="card-body p-0">
+            <ngx-spinner name="medicine-list-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)" 
+                         size="medium" color="#1b5e3f" type="ball-clip-rotate">
+            </ngx-spinner>
             <table class="table align-middle mb-0">
                 <thead class="table-light">
                     <tr>

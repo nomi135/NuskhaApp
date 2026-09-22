@@ -37,6 +37,7 @@ export class MedicineFormModalComponent implements OnInit {
   private symptomService = inject(SymptomService);
   private doctorService = inject(DoctorService);
   private spinnerService = inject(NgxSpinnerService);
+  private readonly spinnerName = 'medicine-form-spinner';
   private toastr = inject(ToastrService);
 
   medicineForm: FormGroup = this.fb.group({
@@ -84,16 +85,30 @@ export class MedicineFormModalComponent implements OnInit {
   }
 
   loadDoctors(): void {
+    this.spinnerService.show(this.spinnerName);
     this.doctorService.getDoctors().subscribe({
-      next: (doctors) => this.doctors = doctors,
-      error: (err) => this.toastr.error(err)
+      next: (doctors) => {
+        this.doctors = doctors
+        this.spinnerService.hide(this.spinnerName);
+      },
+      error: (err) => {
+        this.toastr.error(err);
+        this.spinnerService.hide(this.spinnerName);
+      }
     });
   }
 
   loadSymptoms(): void {
+    this.spinnerService.show(this.spinnerName);
     this.symptomService.getSymptoms().subscribe({
-      next: (symptoms) => this.symptoms = symptoms,
-      error: (err) => this.toastr.error(err)
+      next: (symptoms) => {
+        this.symptoms = symptoms;
+        this.spinnerService.hide(this.spinnerName);
+      },
+      error: (err) => {
+        this.toastr.error(err);
+        this.spinnerService.hide(this.spinnerName);
+      }
     });
   }
 
@@ -197,11 +212,7 @@ export class MedicineFormModalComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(255,255,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
 
     const doctorLinks: MedicineDoctorLinkForm[] = this.selectedDoctorIds.map(doctorId => {
       const row = this.getRowData(doctorId);
@@ -226,7 +237,7 @@ export class MedicineFormModalComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.saved.emit();
         this.successMessage = this.isEditMode
           ? 'Medicine updated successfully.'
@@ -237,7 +248,7 @@ export class MedicineFormModalComponent implements OnInit {
       error: (err) => {
         this.toastr.error(err);
         this.isSubmitting = false;
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       }
     });
   }

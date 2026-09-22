@@ -24,6 +24,7 @@ export class MedicineManagementComponent implements OnInit {
   private medicineService = inject(MedicineService);
   private modalService = inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
+  private readonly spinnerName = 'medicine-list-spinner';
   private toastr = inject(ToastrService);
   searchTerm = '';
   currentPage = 1;
@@ -34,19 +35,15 @@ export class MedicineManagementComponent implements OnInit {
   }
 
   loadMedicines(): void {
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(255,255,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.medicineService.getMedicines().subscribe({
       next: (medicines) => {
         this.medicines = medicines;
         this.clampCurrentPage();
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       },
       error: (err) => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.error(err);
       }
     });
@@ -97,19 +94,15 @@ export class MedicineManagementComponent implements OnInit {
   async deleteMedicine(medicine: Medicine): Promise<void> {
     if (!confirm(`Are you sure you want to delete "${medicine.name}"?`)) return;
 
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(255,255,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.medicineService.deleteMedicine(medicine.id).subscribe({
       next: () => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.loadMedicines();
         this.toastr.success('Medicine deleted successfully');
       },
       error: (err) => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.error(err);
       }
     });

@@ -26,7 +26,7 @@ export class DiseaseFormModalComponent implements OnInit {
   isSubmitting = false;
   submitted = false;
   private spinnerService = inject(NgxSpinnerService);
-  
+  private readonly spinnerName = 'disease-form-spinner';
   public bsModalRef = inject(BsModalRef);
   private fb = inject(FormBuilder);
   private diseaseService = inject(DiseaseService);
@@ -68,11 +68,7 @@ export class DiseaseFormModalComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
 
     try {
       const imageFile = await this.resolveImageFile();
@@ -89,7 +85,7 @@ export class DiseaseFormModalComponent implements OnInit {
       request$.subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.spinnerService.hide();
+          this.spinnerService.hide(this.spinnerName);
           this.saved.emit();
           this.successMessage = "Disease added successfully."
           if(this.isEditMode){
@@ -102,7 +98,7 @@ export class DiseaseFormModalComponent implements OnInit {
           this.toastr.error(err);
           //console.error('Failed to save disease', err);
           this.isSubmitting = false;
-          this.spinnerService.hide();
+          this.spinnerService.hide(this.spinnerName);
         }
       });
     } catch (err: unknown) {
@@ -110,7 +106,7 @@ export class DiseaseFormModalComponent implements OnInit {
        this.toastr.error(message);
       //console.error('Failed to prepare image for upload', err);
       this.isSubmitting = false;
-      this.spinnerService.hide();
+      this.spinnerService.hide(this.spinnerName);
     }
   }
 

@@ -21,6 +21,7 @@ export class DiseaseManagementComponent implements OnInit {
   private diseaseService = inject(DiseaseService);
   private modalService =  inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
+  private readonly spinnerName = 'disease-list-spinner';
   private toastr = inject(ToastrService);
   baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
   diseases: Disease[] = [];
@@ -34,21 +35,17 @@ export class DiseaseManagementComponent implements OnInit {
   }
 
   loadDiseases(): void {
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.diseaseService.getDiseases().subscribe({
       next: (diseases) => {
         this.diseases = diseases;
         this.clampCurrentPage();
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       },
       error: (err) => {
         this.toastr.error(err);
         //console.error('Failed to load diseases', err);
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       }
     });
   }
@@ -100,21 +97,17 @@ export class DiseaseManagementComponent implements OnInit {
   deleteDisease(disease: Disease): void {
     if (!confirm(`Are you sure you want to delete "${disease.name}"?`)) return;
 
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.hide(this.spinnerName);
     this.diseaseService.deleteDisease(disease.id).subscribe({
       next: () => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.success("Disease deleted successfully.");
         this.loadDiseases();
       },
       error: (err) => {
         this.toastr.error(err);
         //console.error('Failed to delete disease', err);
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       }
     });
   }

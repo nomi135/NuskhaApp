@@ -38,6 +38,7 @@ export class SymptomFormModalComponent implements OnInit {
   private symptomService = inject(SymptomService);
   private diseaseService = inject(DiseaseService);
   private toastr = inject(ToastrService);
+  private readonly spinnerName = 'symptom-form-spinner';
   baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
   
   symptomForm : FormGroup = this.fb.group({
@@ -61,18 +62,14 @@ export class SymptomFormModalComponent implements OnInit {
   }
 
   loadDiseases(): void {
-     this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.diseaseService.getDiseases().subscribe({
       next: (diseases) => {
         this.diseases = diseases;
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       },
       error: (err) => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
          this.toastr.error(err);
         //console.error('Failed to load diseases', err)
       }
@@ -122,11 +119,7 @@ export class SymptomFormModalComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
 
     try {
       let imageFile: File | undefined;
@@ -148,7 +141,7 @@ export class SymptomFormModalComponent implements OnInit {
       request$.subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.spinnerService.hide();
+          this.spinnerService.hide(this.spinnerName);
           this.saved.emit();
            this.successMessage = "Symptom added successfully."
           if(this.isEditMode){
@@ -161,7 +154,7 @@ export class SymptomFormModalComponent implements OnInit {
           this.toastr.error(err);
           //console.error('Failed to save symptom', err);
           this.isSubmitting = false;
-          this.spinnerService.hide();
+          this.spinnerService.hide(this.spinnerName);
         }
       });
     } catch (err: unknown) {
@@ -169,7 +162,7 @@ export class SymptomFormModalComponent implements OnInit {
       this.toastr.error(message);
       //console.error('Failed to prepare image for upload', err);
       this.isSubmitting = false;
-      this.spinnerService.hide();
+      this.spinnerService.hide(this.spinnerName);
     }
   }
 

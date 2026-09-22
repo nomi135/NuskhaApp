@@ -20,24 +20,21 @@ export class DoctorManagementComponent implements OnInit {
   private doctorService = inject(DoctorService);
   private modalService = inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
+  private readonly spinnerName = 'doctor-list-spinner';
   private toastr = inject(ToastrService);
   ngOnInit(): void {
     this.loadDoctors();
   }
 
   loadDoctors(): void {
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(255,255,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.doctorService.getDoctors().subscribe({
       next: (doctors) => {
         this.doctors = doctors;
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       },
       error: (err) => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.error(err);
       }
     });
@@ -63,18 +60,15 @@ export class DoctorManagementComponent implements OnInit {
     
     if (!confirm(`Are you sure you want to delete "${doctor.name}"?`)) return;
 
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(255,255,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.doctorService.deleteDoctor(doctor.id).subscribe({
       next: () => {
         this.loadDoctors();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.success('Doctor deleted successfully');
       },
       error: (err) => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.error(err);
       }
     });
