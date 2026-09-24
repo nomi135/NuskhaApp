@@ -15,6 +15,14 @@
                         </ng-container>
                     </div>
                 </tab>
+                <tab heading="Countries Management" (selectTab)="onTabActivated($event)">
+                    <div class="container">
+                        <!-- Load only when active for first time -->
+                        <ng-container *ngIf="activeTab?.heading === 'Countries Management'">
+                            <app-country-management></app-country-management>
+                        </ng-container>
+                    </div>
+                </tab>
                 <tab heading="Doctors Management" (selectTab)="onTabActivated($event)">
                     <div class="container">
                         <!-- Load only when active for first time -->

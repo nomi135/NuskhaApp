@@ -7,15 +7,15 @@ namespace API.Controllers
     public class MedicineController(IMedicineService medicineService) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MedicineDto>>> GetMedicines()
+        public async Task<ActionResult<IEnumerable<MedicineDto>>> GetMedicines([FromQuery] int? countryId)
         {
-            return Ok(await medicineService.GetAllMedicinesAsync());
+            return Ok(await medicineService.GetAllMedicinesAsync(countryId));
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<MedicineDto>> GetMedicine(int id)
+        public async Task<ActionResult<MedicineDto>> GetMedicine(int id, [FromQuery] int? countryId)
         {
-            var medicine = await medicineService.GetMedicineByIdAsync(id);
+            var medicine = await medicineService.GetMedicineByIdAsync(id, countryId);
             return medicine == null ? NotFound() : Ok(medicine);
         }
 

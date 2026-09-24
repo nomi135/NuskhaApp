@@ -3,7 +3,7 @@ import { DiseaseService } from '../../_services/disease.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Disease } from '../../_models/disease';
-import { DiseaseFormModalComponent } from '../../modals/disease-form-modal/disease-form-modal/disease-form-modal.component';
+import { DiseaseFormModalComponent } from '../../modals/disease-form-modal/disease-form-modal.component';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';

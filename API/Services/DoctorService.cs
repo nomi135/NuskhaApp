@@ -6,9 +6,9 @@ namespace API.Services
 {
     public class DoctorService(IUnitOfWork unitOfWork) : IDoctorService
     {
-        public async Task<IEnumerable<DoctorDto>> GetAllDoctorsAsync()
+        public async Task<IEnumerable<DoctorDto>> GetAllDoctorsAsync(int? countryId = null)
         {
-            var doctors = await unitOfWork.DoctorRepository.GetDoctorsAsync();
+            var doctors = await unitOfWork.DoctorRepository.GetDoctorsAsync(countryId);
             return doctors.Select(MapToDto);
         }
 
@@ -28,8 +28,16 @@ namespace API.Services
 
             var doctor = new Doctor
             {
-                Name = dto.Name.Trim()
+                Name = dto.Name.Trim(),
+                IsGlobal = dto.IsGlobal
             };
+
+            if (!dto.IsGlobal && dto.CountryIds.Count > 0)
+            {
+                var countries = await unitOfWork.DoctorRepository.GetCountriesByIdsAsync(dto.CountryIds);
+                foreach (var country in countries)
+                    doctor.Countries.Add(country);
+            }
 
             unitOfWork.DoctorRepository.AddDoctor(doctor);
 
@@ -48,6 +56,15 @@ namespace API.Services
                 throw new InvalidOperationException($"A doctor named '{dto.Name}' already exists.");
 
             doctor.Name = dto.Name.Trim();
+            doctor.IsGlobal = dto.IsGlobal;
+
+            doctor.Countries.Clear();
+            if (!dto.IsGlobal && dto.CountryIds.Count > 0)
+            {
+                var countries = await unitOfWork.DoctorRepository.GetCountriesByIdsAsync(dto.CountryIds);
+                foreach (var country in countries)
+                    doctor.Countries.Add(country);
+            }
 
             unitOfWork.DoctorRepository.UpdateDoctor(doctor);
 
@@ -73,7 +90,13 @@ namespace API.Services
         private static DoctorDto MapToDto(Doctor doctor) => new()
         {
             Id = doctor.Id,
-            Name = doctor.Name
+            Name = doctor.Name,
+            IsGlobal = doctor.IsGlobal,
+            Countries = doctor.Countries.Select(c => new CountryLookupDto
+            {
+                Id = c.Id,
+                Name = c.Name
+            }).ToList()
         };
     }
 }

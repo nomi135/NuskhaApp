@@ -14,6 +14,7 @@ namespace API.Data
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<MedicineDoctor> MedicineDoctors { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,22 +37,32 @@ namespace API.Data
             .IsUnique();
 
             builder.Entity<Symptom>()
-           .HasIndex(s => s.Name)
-           .IsUnique();
+            .HasIndex(s => s.Name)
+            .IsUnique();
 
             builder.Entity<Medicine>()
-           .HasIndex(m => m.Name)
-           .IsUnique();
+            .HasIndex(m => m.Name)
+            .IsUnique();
 
-           builder.Entity<Doctor>()
-          .HasIndex(d => d.Name)
-          .IsUnique();
+            builder.Entity<Doctor>()
+            .HasIndex(d => d.Name)
+            .IsUnique();
+
+            builder.Entity<Country>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
 
             // Many-to-many: EF Core auto-generates the join table "DiseaseSymptom"
             builder.Entity<Disease>()
                 .HasMany(d => d.Symptoms)
                 .WithMany(s => s.Diseases)
                 .UsingEntity(j => j.ToTable("DiseaseSymptom"));
+
+            // Doctor <-> Country many-to-many
+            builder.Entity<Doctor>()
+                .HasMany(d => d.Countries)
+                .WithMany(c => c.Doctors)
+                .UsingEntity(j => j.ToTable("DoctorCountry"));
 
             // Medicine -> MedicineDoctor (one medicine has many per-doctor links)
             builder.Entity<MedicineDoctor>()

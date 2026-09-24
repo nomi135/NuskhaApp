@@ -5,7 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MedicineService } from '../../_services/medicine.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { MedicineFormModalComponent } from '../../modals/medicine-form-modal/medicine-form-modal/medicine-form-modal.component';
+import { MedicineFormModalComponent } from '../../modals/medicine-form-modal/medicine-form-modal.component';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
 import { SymptomLookup } from '../../_models/symptom-lookup';

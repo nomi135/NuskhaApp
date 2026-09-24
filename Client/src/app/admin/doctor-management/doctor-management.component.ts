@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DoctorService } from '../../_services/doctor.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { DoctorFormModalComponent } from '../../modals/doctor-form-modal/doctor-form-modal/doctor-form-modal.component';
+import { DoctorFormModalComponent } from '../../modals/doctor-form-modal/doctor-form-modal.component';
 
 @Component({
   selector: 'app-doctor-management',

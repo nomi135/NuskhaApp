@@ -1,13 +1,13 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Disease, DiseaseForm } from '../../../_models/disease';
+import { Disease, DiseaseForm } from '../../_models/disease';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { DiseaseService } from '../../../_services/disease.service';
-import { TextInputComponent } from '../../../_forms/text-input/text-input.component';
+import { DiseaseService } from '../../_services/disease.service';
+import { TextInputComponent } from '../../_forms/text-input/text-input.component';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-disease-form-modal',

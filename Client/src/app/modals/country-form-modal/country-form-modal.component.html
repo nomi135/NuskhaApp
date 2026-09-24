@@ -1,17 +1,17 @@
 <div class="modal-header">
-    <h5 class="modal-title">{{ isEditMode ? 'Edit Doctor' : 'Add Doctor' }}</h5>
+    <h5 class="modal-title">{{ isEditMode ? 'Edit Country' : 'Add Country' }}</h5>
     <button type="button" class="btn-close" (click)="cancel()" aria-label="Close"></button>
 </div>
 
 <div class="modal-body">
-    <ngx-spinner name="doctor-form-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+    <ngx-spinner name="country-form-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
                  size="medium" color="#1b5e3f" type="ball-clip-rotate">
     </ngx-spinner>
-    <form [formGroup]="doctorForm" (ngSubmit)="save()" novalidate>
+    <form [formGroup]="countryForm" (ngSubmit)="save()" novalidate>
         <div class="mb-3">
             <label class="form-label">Name <span class="text-danger">*</span></label>
             <app-text-input
-                [formControl]="$any(doctorForm.controls['name'])"
+                [formControl]="$any(countryForm.controls['name'])"
                 [label]="'Name'">
             </app-text-input>
         </div>

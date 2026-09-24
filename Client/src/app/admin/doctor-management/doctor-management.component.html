@@ -18,6 +18,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>Name</th>
+                        <th>Availability</th>
                         <th class="text-end" style="width: 160px;">Actions</th>
                     </tr>
                 </thead>
@@ -25,6 +26,19 @@
                     @for (doctor of doctors; track doctor.id) {
                         <tr>
                             <td>{{ doctor.name }}</td>
+                            <td>
+                                @if (doctor.isGlobal) {
+                                    <span class="badge bg-success-subtle text-success border">
+                                        <i class="bi bi-globe2 me-1"></i>Global
+                                    </span>
+                                } @else {
+                                    @for (country of doctor.countries; track country.id) {
+                                        <span class="badge bg-light text-dark border me-1 mb-1">{{ country.name }}</span>
+                                    } @empty {
+                                        <span class="text-muted small">No countries linked</span>
+                                    }
+                                }
+                            </td>
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-success me-2" (click)="openEditModal(doctor)">
                                     <i class="bi bi-pencil"></i>
@@ -36,7 +50,7 @@
                         </tr>
                     } @empty {
                         <tr>
-                            <td colspan="2" class="text-center text-muted py-4">No doctors added yet.</td>
+                            <td colspan="3" class="text-center text-muted py-4">No doctors added yet.</td>
                         </tr>
                     }
                 </tbody>

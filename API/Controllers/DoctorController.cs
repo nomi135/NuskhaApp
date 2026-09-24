@@ -7,9 +7,9 @@ namespace API.Controllers
     public class DoctorController(IDoctorService doctorService) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DoctorDto>>> GetDoctors()
+        public async Task<ActionResult<IEnumerable<DoctorDto>>> GetDoctors([FromQuery] int? countryId)
         {
-            return Ok(await doctorService.GetAllDoctorsAsync());
+            return Ok(await doctorService.GetAllDoctorsAsync(countryId));
         }
 
         [HttpGet("{id:int}")]

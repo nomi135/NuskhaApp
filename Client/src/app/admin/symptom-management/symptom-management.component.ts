@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { SymptomService } from '../../_services/symptom.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { SymptomFormModalComponent } from '../../modals/symptom-form-modal/symptom-form-modal/symptom-form-modal.component';
+import { SymptomFormModalComponent } from '../../modals/symptom-form-modal/symptom-form-modal.component';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

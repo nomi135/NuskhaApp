@@ -16,6 +16,7 @@ namespace API.Data
         await context.Medicines
             .Include(m => m.MedicineDoctors)
                 .ThenInclude(md => md.Doctor)
+                    .ThenInclude(d => d.Countries)
             .Include(m => m.MedicineDoctors)
                 .ThenInclude(md => md.Symptoms)
             .FirstOrDefaultAsync(m => m.Id == id);
@@ -24,6 +25,7 @@ namespace API.Data
         await context.Medicines
             .Include(m => m.MedicineDoctors)
                 .ThenInclude(md => md.Doctor)
+                    .ThenInclude(d => d.Countries)
             .Include(m => m.MedicineDoctors)
                 .ThenInclude(md => md.Symptoms)
             .OrderBy(m => m.Name)

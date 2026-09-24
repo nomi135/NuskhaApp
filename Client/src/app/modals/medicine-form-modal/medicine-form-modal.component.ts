@@ -5,13 +5,13 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { Medicine, MedicineDoctorLinkForm, MedicineForm } from '../../../_models/medicine';
-import { Symptom } from '../../../_models/symptom';
-import { Doctor } from '../../../_models/doctor';
-import { MedicineService } from '../../../_services/medicine.service';
-import { SymptomService } from '../../../_services/symptom.service';
-import { DoctorService } from '../../../_services/doctor.service';
-import { TextInputComponent } from '../../../_forms/text-input/text-input.component';
+import { Medicine, MedicineDoctorLinkForm, MedicineForm } from '../../_models/medicine';
+import { Symptom } from '../../_models/symptom';
+import { Doctor } from '../../_models/doctor';
+import { MedicineService } from '../../_services/medicine.service';
+import { SymptomService } from '../../_services/symptom.service';
+import { DoctorService } from '../../_services/doctor.service';
+import { TextInputComponent } from '../../_forms/text-input/text-input.component';
 
 interface DoctorLinkData {
   potencies: string[];

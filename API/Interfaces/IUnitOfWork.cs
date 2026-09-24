@@ -7,6 +7,7 @@
         ISymptomRepository SymptomRepository { get; }
         IMedicineRepository MedicineRepository { get; }
         IDoctorRepository DoctorRepository { get; }
+        ICountryRepository CountryRepository { get; }
         Task<bool> Complete();
         bool HasChanges();
     }

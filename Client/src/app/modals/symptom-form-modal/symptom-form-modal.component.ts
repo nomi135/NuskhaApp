@@ -1,16 +1,16 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Symptom, SymptomForm } from '../../../_models/symptom';
+import { Symptom, SymptomForm } from '../../_models/symptom';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Disease } from '../../../_models/disease';
+import { Disease } from '../../_models/disease';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SymptomService } from '../../../_services/symptom.service';
-import { DiseaseService } from '../../../_services/disease.service';
+import { SymptomService } from '../../_services/symptom.service';
+import { DiseaseService } from '../../_services/disease.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
-import { TextInputComponent } from '../../../_forms/text-input/text-input.component';
+import { TextInputComponent } from '../../_forms/text-input/text-input.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-symptom-form-modal',

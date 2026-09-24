@@ -6,16 +6,18 @@ namespace API.Services;
 
 public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
 {
-    public async Task<IEnumerable<MedicineDto>> GetAllMedicinesAsync()
+    public async Task<IEnumerable<MedicineDto>> GetAllMedicinesAsync(int? countryId = null)
     {
         var medicines = await unitOfWork.MedicineRepository.GetMedicinesAsync();
-        return medicines.Select(MapToDto);
+        return medicines
+            .Select(m => MapToDto(m, countryId))
+            .Where(dto => dto != null)!;
     }
 
-    public async Task<MedicineDto?> GetMedicineByIdAsync(int id)
+    public async Task<MedicineDto?> GetMedicineByIdAsync(int id, int? countryId = null)
     {
         var medicine = await unitOfWork.MedicineRepository.GetMedicineByIdAsync(id);
-        return medicine == null ? null : MapToDto(medicine);
+        return medicine == null ? null : MapToDto(medicine, countryId);
     }
 
     public Task<bool> CheckNameExistsAsync(string name) =>
@@ -42,7 +44,7 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to create medicine");
 
-        return MapToDto(medicine);
+        return MapToDto(medicine, null);
     }
 
     public async Task<MedicineDto?> UpdateMedicineAsync(int id, MedicineFormDto dto)
@@ -69,7 +71,7 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to update medicine");
 
-        return MapToDto(medicine);
+        return MapToDto(medicine, null);
     }
 
     public async Task<bool> DeleteMedicineAsync(int id)
@@ -127,13 +129,17 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         }
     }
 
-    private static MedicineDto MapToDto(Medicine medicine) => new()
+    private static MedicineDto? MapToDto(Medicine medicine, int? countryId)
     {
-        Id = medicine.Id,
-        Name = medicine.Name,
-        Description = medicine.Description,
-        Caution = medicine.Caution,
-        DoctorLinks = medicine.MedicineDoctors.Select(md => new MedicineDoctorLinkDto
+        var doctorLinks = medicine.MedicineDoctors.AsEnumerable();
+
+        if (countryId.HasValue)
+        {
+            doctorLinks = doctorLinks.Where(md =>
+                md.Doctor.IsGlobal || md.Doctor.Countries.Any(c => c.Id == countryId.Value));
+        }
+
+        var linkDtos = doctorLinks.Select(md => new MedicineDoctorLinkDto
         {
             DoctorId = md.DoctorId,
             DoctorName = md.Doctor.Name,
@@ -143,6 +149,19 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
                 Id = s.Id,
                 Name = s.Name
             }).ToList()
-        }).ToList()
-    };
+        }).ToList();
+
+        // Filtering by country and nothing survived means this medicine isn't relevant there
+        if (countryId.HasValue && linkDtos.Count == 0)
+            return null;
+
+        return new MedicineDto
+        {
+            Id = medicine.Id,
+            Name = medicine.Name,
+            Description = medicine.Description,
+            Caution = medicine.Caution,
+            DoctorLinks = linkDtos
+        };
+    }
 }

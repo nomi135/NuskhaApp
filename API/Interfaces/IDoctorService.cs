@@ -4,7 +4,7 @@ namespace API.Interfaces
 {
     public interface IDoctorService
     {
-        Task<IEnumerable<DoctorDto>> GetAllDoctorsAsync();
+        Task<IEnumerable<DoctorDto>> GetAllDoctorsAsync(int? countryId = null);
         Task<DoctorDto?> GetDoctorByIdAsync(int id);
         Task<bool> CheckNameExistsAsync(string name);
         Task<DoctorDto> CreateDoctorAsync(DoctorFormDto dto);

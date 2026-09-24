@@ -20,12 +20,14 @@ namespace API.Extensions
             services.AddScoped<ISymptomRepository, SymptomRepository>();
             services.AddScoped<IMedicineRepository, MedicineRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<ISymptomService, SymptomService>();
             services.AddScoped<IMedicineService, MedicineService>();
             services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
