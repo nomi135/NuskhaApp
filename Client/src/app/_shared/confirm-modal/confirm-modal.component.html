@@ -1,0 +1,11 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close" (click)="cancel()" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <p class="mb-0">{{ message }}</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn" [ngClass]="confirmClass" (click)="confirm()">{{ confirmText }}</button>
+</div>

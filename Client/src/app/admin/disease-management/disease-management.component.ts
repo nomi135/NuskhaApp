@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
+import { ConfirmService } from '../../_services/confirm.service';
 
 @Component({
   selector: 'app-disease-management',
@@ -21,6 +22,7 @@ export class DiseaseManagementComponent implements OnInit {
   private diseaseService = inject(DiseaseService);
   private modalService =  inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
+  private confirmService = inject(ConfirmService);
   private readonly spinnerName = 'disease-list-spinner';
   private toastr = inject(ToastrService);
   baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
@@ -94,8 +96,9 @@ export class DiseaseManagementComponent implements OnInit {
     this.bsModalRef.content?.saved.subscribe(() => this.loadDiseases());
   }
 
-  deleteDisease(disease: Disease): void {
-    if (!confirm(`Are you sure you want to delete "${disease.name}"?`)) return;
+  async deleteDisease(disease: Disease): Promise<void> {
+    const confirmed = await this.confirmService.confirm(`Are you sure you want to delete "${disease.name}"?`, 'Delete Disease');
+    if (!confirmed) return;
 
     this.spinnerService.hide(this.spinnerName);
     this.diseaseService.deleteDisease(disease.id).subscribe({

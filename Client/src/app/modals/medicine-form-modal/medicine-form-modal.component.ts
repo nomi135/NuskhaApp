@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +12,7 @@ import { MedicineService } from '../../_services/medicine.service';
 import { SymptomService } from '../../_services/symptom.service';
 import { DoctorService } from '../../_services/doctor.service';
 import { TextInputComponent } from '../../_forms/text-input/text-input.component';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 interface DoctorLinkData {
   potencies: string[];
@@ -29,9 +30,11 @@ interface DoctorLinkData {
 })
 export class MedicineFormModalComponent implements OnInit {
   @Input() medicine: Medicine | null = null;
+  @Input() allMedicines: Medicine[] = [];
   @Output() saved = new EventEmitter<void>();
 
   public bsModalRef = inject(BsModalRef);
+  private modalService = inject(BsModalService);
   private fb = inject(FormBuilder);
   private medicineService = inject(MedicineService);
   private symptomService = inject(SymptomService);
@@ -53,6 +56,8 @@ export class MedicineFormModalComponent implements OnInit {
   doctorSearchTerm = '';
   private doctorLinkData = new Map<number, DoctorLinkData>();
 
+  duplicateMedicine: Medicine | null = null;
+
   submitted = false;
   isSubmitting = false;
   successMessage: string | null = null;
@@ -60,6 +65,11 @@ export class MedicineFormModalComponent implements OnInit {
   ngOnInit(): void {
     this.loadDoctors();
     this.loadSymptoms();
+
+    // Watch the Name field and flag a duplicate once typing settles
+    this.medicineForm.get('name')?.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((value: string) => this.checkDuplicateName(value));
 
     if (this.medicine) {
       this.medicineForm.patchValue({
@@ -79,6 +89,7 @@ export class MedicineFormModalComponent implements OnInit {
       });
     }
   }
+  
 
   get isEditMode(): boolean {
     return !!this.medicine;
@@ -202,11 +213,40 @@ export class MedicineFormModalComponent implements OnInit {
       .join(', ');
   }
 
+  // ===== Duplicate name check =====
+  private checkDuplicateName(value: string): void {
+    const name = value?.trim().toLowerCase();
+    if (!name) {
+      this.duplicateMedicine = null;
+      return;
+    }
+
+    this.duplicateMedicine = this.allMedicines.find(m =>
+      m.name.trim().toLowerCase() === name && m.id !== this.medicine?.id
+    ) ?? null;
+  }
+
+  openDuplicateInEditMode(): void {
+    if (!this.duplicateMedicine) return;
+
+    const duplicate = this.duplicateMedicine;
+    this.bsModalRef.hide();
+
+    const editRef = this.modalService.show(MedicineFormModalComponent, {
+      class: 'modal-dialog-centered modal-lg',
+      initialState: { medicine: duplicate, allMedicines: this.allMedicines }
+    });
+
+    // Forward the save event so the grid (subscribed to this component's
+    // own `saved`) still reloads when the duplicate is edited and saved.
+    editRef.content?.saved.subscribe(() => this.saved.emit());
+  }
+
   // ===== Save =====
   save(): void {
     this.submitted = true;
 
-    if (this.medicineForm.invalid) {
+    if (this.medicineForm.invalid  || this.duplicateMedicine) {
       this.medicineForm.markAllAsTouched();
       return;
     }

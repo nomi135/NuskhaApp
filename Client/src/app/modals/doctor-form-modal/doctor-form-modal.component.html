@@ -58,9 +58,6 @@
         <div class="modal-footer px-0 pb-0">
             <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
             <button type="submit" class="btn btn-success" [disabled]="isSubmitting">
-                @if (isSubmitting) {
-                    <span class="spinner-border spinner-border-sm me-1"></span>
-                }
                 Save
             </button>
         </div>

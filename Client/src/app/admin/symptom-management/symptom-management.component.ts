@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
+import { ConfirmService } from '../../_services/confirm.service';
 
 @Component({
   selector: 'app-symptom-management',
@@ -21,6 +22,7 @@ export class SymptomManagementComponent implements OnInit {
    private symptomService = inject(SymptomService);
    private modalService =  inject(BsModalService);
    private spinnerService = inject(NgxSpinnerService);
+   private confirmService = inject(ConfirmService);
    private toastr = inject(ToastrService);
    baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
    symptoms: Symptom[] = [];
@@ -96,7 +98,8 @@ export class SymptomManagementComponent implements OnInit {
   }
   
   async deleteSymptom(symptom: Symptom): Promise<void> {
-    if (!confirm(`Are you sure you want to delete "${symptom.name}"?`)) return;
+    const confirmed = await this.confirmService.confirm(`Are you sure you want to delete "${symptom.name}"?`, 'Delete Symptom');
+    if (!confirmed) return;
 
     this.spinnerService.show(undefined, {
       type: 'line-scale-party',

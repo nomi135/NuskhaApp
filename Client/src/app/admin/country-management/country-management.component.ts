@@ -6,6 +6,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { CountryService } from '../../_services/country.service';
 import { ToastrService } from 'ngx-toastr';
 import { CountryFormModalComponent } from '../../modals/country-form-modal/country-form-modal.component';
+import { ConfirmService } from '../../_services/confirm.service';
 
 @Component({
   selector: 'app-country-management',
@@ -20,6 +21,7 @@ export class CountryManagementComponent implements OnInit {
 
   private countryService = inject(CountryService);
   private modalService = inject(BsModalService);
+  private confirmService = inject(ConfirmService);
   private spinnerService = inject(NgxSpinnerService);
   private readonly spinnerName = 'country-list-spinner';
   private toastr = inject(ToastrService);
@@ -59,7 +61,8 @@ export class CountryManagementComponent implements OnInit {
   }
 
   async deleteCountry(country: Country): Promise<void> {
-    if (!confirm(`Are you sure you want to delete "${country.name}"?`)) return;
+    const confirmed = await this.confirmService.confirm(`Are you sure you want to delete "${country.name}"?`, 'Delete Country');
+    if (!confirmed) return;
 
     this.spinnerService.show(this.spinnerName);
     this.countryService.deleteCountry(country.id).subscribe({

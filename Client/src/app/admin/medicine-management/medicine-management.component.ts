@@ -9,6 +9,7 @@ import { MedicineFormModalComponent } from '../../modals/medicine-form-modal/med
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
 import { SymptomLookup } from '../../_models/symptom-lookup';
+import { ConfirmService } from '../../_services/confirm.service';
 
 @Component({
   selector: 'app-medicine-management',
@@ -22,6 +23,7 @@ export class MedicineManagementComponent implements OnInit {
   bsModalRef?: BsModalRef;
 
   private medicineService = inject(MedicineService);
+  private confirmService = inject(ConfirmService);
   private modalService = inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
   private readonly spinnerName = 'medicine-list-spinner';
@@ -78,7 +80,7 @@ export class MedicineManagementComponent implements OnInit {
   openAddModal(): void {
     this.bsModalRef = this.modalService.show(MedicineFormModalComponent, {
       class: 'modal-dialog-centered modal-lg',
-      initialState: { medicine: null }
+      initialState: { medicine: null, allMedicines: this.medicines }
     });
     this.bsModalRef.content?.saved.subscribe(() => this.loadMedicines());
   }
@@ -86,13 +88,14 @@ export class MedicineManagementComponent implements OnInit {
   openEditModal(medicine: Medicine): void {
     this.bsModalRef = this.modalService.show(MedicineFormModalComponent, {
       class: 'modal-dialog-centered modal-lg',
-      initialState: { medicine }
+      initialState: { medicine, allMedicines: this.medicines }
     });
     this.bsModalRef.content?.saved.subscribe(() => this.loadMedicines());
   }
 
   async deleteMedicine(medicine: Medicine): Promise<void> {
-    if (!confirm(`Are you sure you want to delete "${medicine.name}"?`)) return;
+    const confirmed = await this.confirmService.confirm(`Are you sure you want to delete "${medicine.name}"?`, 'Delete Medicine');
+    if (!confirmed) return;
 
     this.spinnerService.show(this.spinnerName);
     this.medicineService.deleteMedicine(medicine.id).subscribe({

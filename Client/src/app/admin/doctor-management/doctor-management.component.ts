@@ -5,6 +5,7 @@ import { DoctorService } from '../../_services/doctor.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { DoctorFormModalComponent } from '../../modals/doctor-form-modal/doctor-form-modal.component';
+import { ConfirmService } from '../../_services/confirm.service';
 
 @Component({
   selector: 'app-doctor-management',
@@ -18,6 +19,7 @@ export class DoctorManagementComponent implements OnInit {
   bsModalRef?: BsModalRef;
 
   private doctorService = inject(DoctorService);
+  private confirmService = inject(ConfirmService);
   private modalService = inject(BsModalService);
   private spinnerService = inject(NgxSpinnerService);
   private readonly spinnerName = 'doctor-list-spinner';
@@ -57,8 +59,8 @@ export class DoctorManagementComponent implements OnInit {
   }
 
   async deleteDoctor(doctor: Doctor): Promise<void> {
-    
-    if (!confirm(`Are you sure you want to delete "${doctor.name}"?`)) return;
+    const confirmed = await this.confirmService.confirm(`Are you sure you want to delete "${doctor.name}"?`, 'Delete Doctor');
+    if (!confirmed) return;
 
     this.spinnerService.show(this.spinnerName);
     this.doctorService.deleteDoctor(doctor.id).subscribe({
