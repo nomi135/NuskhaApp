@@ -11,7 +11,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
   styleUrl: './layout.component.scss'
 })
 export class LayoutComponent implements OnInit {
-  supportEmail: string = "postmaster@rxhomeopro.pk";
+  supportEmail: string = "admin@rxhomeopro.pk";
   supportPhone: string = "0333-4557649";
   currentYear: number = new Date().getFullYear();
   accountService = inject(AccountService);

@@ -4,14 +4,18 @@ using API.Interfaces;
 
 namespace API.Services;
 
-public class DiseaseService(IUnitOfWork unitOfWork, IWebHostEnvironment env) : IDiseaseService
+public class DiseaseService(IUnitOfWork unitOfWork, IWebHostEnvironment env, ICacheService cacheService) : IDiseaseService
 {
     private const string FolderName = "diseases";
+    private const string ListCacheKey = "diseases_all";
 
     public async Task<IEnumerable<DiseaseDto>> GetAllDiseasesAsync()
     {
-        var diseases = await unitOfWork.DiseaseRepository.GetDiseasesAsync();
-        return diseases.Select(MapToDto);
+        return await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
+        {
+            var diseases = await unitOfWork.DiseaseRepository.GetDiseasesAsync();
+            return diseases.Select(MapToDto).ToList();
+        });
     }
 
     public async Task<DiseaseDto?> GetDiseaseByIdAsync(int id)
@@ -41,6 +45,8 @@ public class DiseaseService(IUnitOfWork unitOfWork, IWebHostEnvironment env) : I
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to create disease");
 
+        cacheService.InvalidateAll();
+
         return MapToDto(disease);
     }
 
@@ -66,6 +72,8 @@ public class DiseaseService(IUnitOfWork unitOfWork, IWebHostEnvironment env) : I
         if (oldImagePath != newImagePath)
             DeletePhysicalImage(oldImagePath);
 
+        cacheService.InvalidateAll();
+
         return MapToDto(disease);
     }
 
@@ -80,6 +88,7 @@ public class DiseaseService(IUnitOfWork unitOfWork, IWebHostEnvironment env) : I
             throw new Exception("Failed to delete disease");
 
         DeletePhysicalImage(disease.ImagePath);
+        cacheService.InvalidateAll();
 
         return true;
     }

@@ -18,20 +18,11 @@ public class DoctorRepository(DataContext context) : IDoctorRepository
             .Include(d => d.Countries)
             .FirstOrDefaultAsync(d => d.Id == id);
 
-    public async Task<IEnumerable<Doctor>> GetDoctorsAsync(int? countryId = null)
-    {
-        var query = context.Doctors
-            .Include(d => d.Countries)
-            .AsQueryable();
-
-        if (countryId.HasValue)
-        {
-            // Relevant if this doctor is global, or specifically linked to the given country
-            query = query.Where(d => d.IsGlobal || d.Countries.Any(c => c.Id == countryId.Value));
-        }
-
-        return await query.OrderBy(d => d.Name).ToListAsync();
-    }
+    public async Task<IEnumerable<Doctor>> GetDoctorsAsync() =>
+       await context.Doctors
+           .Include(d => d.Countries)
+           .OrderBy(d => d.Name)
+           .ToListAsync();
 
     public async Task<bool> NameExistsAsync(string name, int? excludeId = null)
     {

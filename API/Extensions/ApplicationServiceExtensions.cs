@@ -22,6 +22,7 @@ namespace API.Extensions
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddCors();
+            services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<ISymptomService, SymptomService>();

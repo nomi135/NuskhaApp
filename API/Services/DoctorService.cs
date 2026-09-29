@@ -4,12 +4,22 @@ using API.Interfaces;
 
 namespace API.Services
 {
-    public class DoctorService(IUnitOfWork unitOfWork) : IDoctorService
+    public class DoctorService(IUnitOfWork unitOfWork, ICacheService cacheService) : IDoctorService
     {
+        private const string ListCacheKey = "doctors_all";
         public async Task<IEnumerable<DoctorDto>> GetAllDoctorsAsync(int? countryId = null)
         {
-            var doctors = await unitOfWork.DoctorRepository.GetDoctorsAsync(countryId);
-            return doctors.Select(MapToDto);
+            var allDoctors = await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
+            {
+                var doctors = await unitOfWork.DoctorRepository.GetDoctorsAsync();
+                return doctors.Select(MapToDto).ToList();
+            });
+
+            if (!countryId.HasValue) return allDoctors;
+
+            return allDoctors
+                .Where(d => d.IsGlobal || d.Countries.Any(c => c.Id == countryId.Value))
+                .ToList();
         }
 
         public async Task<DoctorDto?> GetDoctorByIdAsync(int id)
@@ -44,6 +54,8 @@ namespace API.Services
             if (!await unitOfWork.Complete())
                 throw new Exception("Failed to create doctor");
 
+            cacheService.InvalidateAll();
+
             return MapToDto(doctor);
         }
 
@@ -71,6 +83,8 @@ namespace API.Services
             if (!await unitOfWork.Complete())
                 throw new Exception("Failed to update doctor");
 
+            cacheService.InvalidateAll();
+
             return MapToDto(doctor);
         }
 
@@ -83,6 +97,8 @@ namespace API.Services
 
             if (!await unitOfWork.Complete())
                 throw new Exception("Failed to delete doctor");
+
+            cacheService.InvalidateAll();
 
             return true;
         }

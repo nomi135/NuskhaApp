@@ -4,14 +4,18 @@ using API.Interfaces;
 
 namespace API.Services
 {
-    public class SymptomService(IUnitOfWork unitOfWork, IWebHostEnvironment env) : ISymptomService
+    public class SymptomService(IUnitOfWork unitOfWork, IWebHostEnvironment env, ICacheService cacheService) : ISymptomService
     {
         private const string FolderName = "symptoms";
+        private const string ListCacheKey = "symptoms_all";
 
         public async Task<IEnumerable<SymptomDto>> GetAllSymptomsAsync()
         {
-            var symptoms = await unitOfWork.SymptomRepository.GetSymptomsAsync();
-            return symptoms.Select(MapToDto);
+            return await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
+            {
+                var symptoms = await unitOfWork.SymptomRepository.GetSymptomsAsync();
+                return symptoms.Select(MapToDto).ToList();
+            });
         }
 
         public async Task<SymptomDto?> GetSymptomByIdAsync(int id)
@@ -47,6 +51,8 @@ namespace API.Services
 
             if (!await unitOfWork.Complete())
                 throw new Exception("Failed to create symptom");
+
+            cacheService.InvalidateAll();
 
             return MapToDto(symptom);
         }
@@ -84,6 +90,8 @@ namespace API.Services
             if (!await unitOfWork.Complete())
                 throw new Exception("Failed to update symptom");
 
+            cacheService.InvalidateAll();
+
             return MapToDto(symptom);
         }
 
@@ -98,6 +106,7 @@ namespace API.Services
                 throw new Exception("Failed to delete symptom");
 
             DeletePhysicalImage(symptom.ImagePath);
+            cacheService.InvalidateAll();
 
             return true;
         }

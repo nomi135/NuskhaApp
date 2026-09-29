@@ -4,12 +4,16 @@ using API.Interfaces;
 
 namespace API.Services;
 
-public class CountryService(IUnitOfWork unitOfWork) : ICountryService
+public class CountryService(IUnitOfWork unitOfWork, ICacheService cacheService) : ICountryService
 {
+    private const string ListCacheKey = "countries_all";
     public async Task<IEnumerable<CountryDto>> GetAllCountriesAsync()
     {
-        var countries = await unitOfWork.CountryRepository.GetCountriesAsync();
-        return countries.Select(MapToDto);
+        return await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
+        {
+            var countries = await unitOfWork.CountryRepository.GetCountriesAsync();
+            return countries.Select(MapToDto).ToList();
+        });
     }
 
     public async Task<CountryDto?> GetCountryByIdAsync(int id)
@@ -36,6 +40,8 @@ public class CountryService(IUnitOfWork unitOfWork) : ICountryService
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to create country");
 
+        cacheService.InvalidateAll();
+
         return MapToDto(country);
     }
 
@@ -54,6 +60,8 @@ public class CountryService(IUnitOfWork unitOfWork) : ICountryService
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to update country");
 
+        cacheService.InvalidateAll();
+
         return MapToDto(country);
     }
 
@@ -66,6 +74,8 @@ public class CountryService(IUnitOfWork unitOfWork) : ICountryService
 
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to delete country");
+        
+        cacheService.InvalidateAll();
 
         return true;
     }

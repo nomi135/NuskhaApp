@@ -14,6 +14,8 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await userManager.Users
+                 .Include(x => x.UserRoles)
+                 .ThenInclude(x => x.Role)
                  .FirstOrDefaultAsync(x => x.NormalizedUserName == loginDto.Username.ToUpper());
 
             if (user == null || user.UserName == null) return Unauthorized("Invalid username");
@@ -24,6 +26,7 @@ namespace API.Controllers
             return new UserDto
             {
                 UserName = user.UserName,
+                Roles = [.. user.UserRoles.Select(x => x.Role.Name)],
                 Token = await tokenService.CreateToken(user)
             };
         }

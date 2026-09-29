@@ -4,7 +4,7 @@ namespace API.Interfaces
 {
     public interface IDoctorRepository
     {
-        Task<IEnumerable<Doctor>> GetDoctorsAsync(int? countryId = null);
+        Task<IEnumerable<Doctor>> GetDoctorsAsync();
         Task<Doctor?> GetDoctorByIdAsync(int id);
         Task<bool> NameExistsAsync(string name, int? excludeId = null);
         Task<List<Country>> GetCountriesByIdsAsync(List<int> countryIds);

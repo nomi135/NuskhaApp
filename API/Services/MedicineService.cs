@@ -4,14 +4,48 @@ using API.Interfaces;
 
 namespace API.Services;
 
-public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
+public class MedicineService(IUnitOfWork unitOfWork, ICacheService cacheService) : IMedicineService
 {
+    private const string ListCacheKey = "medicines_all";
+    private record CachedDoctorLink(int DoctorId, string DoctorName, bool IsGlobal, List<int> CountryIds, List<string> Potencies, List<SymptomLookupDto> Symptoms);
+    private record CachedMedicine(int Id, string Name, string? Description, string? Caution, List<CachedDoctorLink> DoctorLinks);
     public async Task<IEnumerable<MedicineDto>> GetAllMedicinesAsync(int? countryId = null)
     {
-        var medicines = await unitOfWork.MedicineRepository.GetMedicinesAsync();
-        return medicines
-            .Select(m => MapToDto(m, countryId))
-            .Where(dto => dto != null)!;
+        var cachedMedicines = await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
+        {
+            var medicines = await unitOfWork.MedicineRepository.GetMedicinesAsync();
+            return medicines.Select(MapToCached).ToList();
+        });
+
+        var result = new List<MedicineDto>();
+        foreach (var medicine in cachedMedicines)
+        {
+            var links = medicine.DoctorLinks.AsEnumerable();
+
+            if (countryId.HasValue)
+                links = links.Where(l => l.IsGlobal || l.CountryIds.Contains(countryId.Value));
+
+            var linkDtos = links.Select(l => new MedicineDoctorLinkDto
+            {
+                DoctorId = l.DoctorId,
+                DoctorName = l.DoctorName,
+                Potencies = l.Potencies,
+                Symptoms = l.Symptoms
+            }).ToList();
+
+            if (countryId.HasValue && linkDtos.Count == 0) continue;
+
+            result.Add(new MedicineDto
+            {
+                Id = medicine.Id,
+                Name = medicine.Name,
+                Description = medicine.Description,
+                Caution = medicine.Caution,
+                DoctorLinks = linkDtos
+            });
+        }
+
+        return result;
     }
 
     public async Task<MedicineDto?> GetMedicineByIdAsync(int id, int? countryId = null)
@@ -44,7 +78,9 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to create medicine");
 
-        return MapToDto(medicine, null);
+        cacheService.InvalidateAll();
+
+        return MapToDto(medicine, null)!;
     }
 
     public async Task<MedicineDto?> UpdateMedicineAsync(int id, MedicineFormDto dto)
@@ -61,8 +97,6 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         medicine.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
         medicine.Caution = string.IsNullOrWhiteSpace(dto.Caution) ? null : dto.Caution.Trim();
 
-        // Full replace: each doctor link carries its own potencies + symptoms,
-        // so on update we drop all existing links and rebuild from what was submitted
         medicine.MedicineDoctors.Clear();
         await AddDoctorLinksAsync(medicine, dto.DoctorLinks);
 
@@ -70,6 +104,8 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
 
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to update medicine");
+
+        cacheService.InvalidateAll();
 
         return MapToDto(medicine, null);
     }
@@ -83,6 +119,8 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
 
         if (!await unitOfWork.Complete())
             throw new Exception("Failed to delete medicine");
+
+        cacheService.InvalidateAll();
 
         return true;
     }
@@ -129,6 +167,20 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
         }
     }
 
+    private static CachedMedicine MapToCached(Medicine medicine) => new(
+        medicine.Id,
+        medicine.Name,
+        medicine.Description,
+        medicine.Caution,
+        medicine.MedicineDoctors.Select(md => new CachedDoctorLink(
+            md.DoctorId,
+            md.Doctor.Name,
+            md.Doctor.IsGlobal,
+            md.Doctor.Countries.Select(c => c.Id).ToList(),
+            md.Potencies,
+            md.Symptoms.Select(s => new SymptomLookupDto { Id = s.Id, Name = s.Name }).ToList()
+        )).ToList());
+
     private static MedicineDto? MapToDto(Medicine medicine, int? countryId)
     {
         var doctorLinks = medicine.MedicineDoctors.AsEnumerable();
@@ -151,7 +203,6 @@ public class MedicineService(IUnitOfWork unitOfWork) : IMedicineService
             }).ToList()
         }).ToList();
 
-        // Filtering by country and nothing survived means this medicine isn't relevant there
         if (countryId.HasValue && linkDtos.Count == 0)
             return null;
 

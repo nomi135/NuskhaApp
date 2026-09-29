@@ -34,11 +34,14 @@
                                (click)="setActiveSection('')">Login</a>
                         </li>
                     }
-                    @if (accountService.currentUser()) {
+                    @if (accountService.currentUser()?.roles?.includes('Admin')) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/admin" routerLinkActive="active"
                                (click)="setActiveSection('')">Admin Panel</a>
                         </li>
+                    }
+                    @if (accountService.currentUser()) 
+                    {
                         <li class="nav-item ms-lg-2">
                             <a class="btn btn-outline-success btn-sm px-3" href="#" (click)="logout()">Logout</a>
                         </li>
