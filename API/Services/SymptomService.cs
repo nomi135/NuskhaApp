@@ -9,13 +9,19 @@ namespace API.Services
         private const string FolderName = "symptoms";
         private const string ListCacheKey = "symptoms_all";
 
-        public async Task<IEnumerable<SymptomDto>> GetAllSymptomsAsync()
+        public async Task<IEnumerable<SymptomDto>> GetAllSymptomsAsync(int? diseaseId = null)
         {
-            return await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
+            var allSymptoms = await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
             {
                 var symptoms = await unitOfWork.SymptomRepository.GetSymptomsAsync();
                 return symptoms.Select(MapToDto).ToList();
             });
+
+            if (!diseaseId.HasValue) return allSymptoms;
+
+            return allSymptoms
+                .Where(s => s.Diseases.Any(d => d.Id == diseaseId.Value))
+                .ToList();
         }
 
         public async Task<SymptomDto?> GetSymptomByIdAsync(int id)

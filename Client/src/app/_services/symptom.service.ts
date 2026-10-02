@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Symptom, SymptomForm } from '../_models/symptom';
 
@@ -11,8 +11,12 @@ export class SymptomService {
     baseUrl = environment.apiUrl;
     private http = inject(HttpClient);
     
-    getSymptoms(): Observable<Symptom[]> {
-      return this.http.get<Symptom[]>(this.baseUrl + 'symptom');
+    getSymptoms(diseaseId?: number): Observable<Symptom[]> {
+      let params = new HttpParams();
+      if (diseaseId !== undefined && diseaseId !== null) {
+        params = params.set('diseaseId', diseaseId.toString());
+      }
+      return this.http.get<Symptom[]>(this.baseUrl + 'symptom', { params });
     }
 
     getSymptom(id: number): Observable<Symptom> {

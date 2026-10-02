@@ -1,0 +1,27 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+  --nuskha-green-light: #e8f3ec;
+}
+
+.disease-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+.btn-outline-success {
+  color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+    color: #fff;
+  }
+}

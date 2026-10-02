@@ -26,6 +26,22 @@
                         <a class="nav-link" [class.active]="activeSection() === 'how-it-works'"
                            href="#how-it-works" (click)="setActiveSection('how-it-works')">How It Works</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/disease" routerLinkActive="active"
+                        (click)="setActiveSection('')">Diseases</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/symptom" routerLinkActive="active"
+                        (click)="setActiveSection('')">Symptoms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/doctor" routerLinkActive="active"
+                        (click)="setActiveSection('')">Doctors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/medicine" routerLinkActive="active"
+                        (click)="setActiveSection('')">Medicines</a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-lg-3 mb-2 mb-lg-0 align-items-lg-center">
                     @if (!accountService.currentUser()) {
@@ -101,6 +117,10 @@
                         <a class="text-decoration-none text-body" [class.active]="activeSection() === 'how-it-works'"
                            href="#how-it-works" (click)="setActiveSection('how-it-works')">How It Works</a>
                     </li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/disease" routerLinkActive="active">Diseases</a></li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/symptom" routerLinkActive="active">Symptoms</a></li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/doctor" routerLinkActive="active">Doctors</a></li>
+                    <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/medicine" routerLinkActive="active">Medicines</a></li>
                     @if (!accountService.currentUser()) {
                         <li class="mb-2">
                             <a class="text-decoration-none text-body" routerLink="/login" routerLinkActive="active"

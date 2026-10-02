@@ -22,6 +22,7 @@ export class SymptomManagementComponent implements OnInit {
    private symptomService = inject(SymptomService);
    private modalService =  inject(BsModalService);
    private spinnerService = inject(NgxSpinnerService);
+   private readonly spinnerName = 'symptom-list-spinner';
    private confirmService = inject(ConfirmService);
    private toastr = inject(ToastrService);
    baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
@@ -36,21 +37,17 @@ export class SymptomManagementComponent implements OnInit {
   }
 
   loadSymptoms(): void {
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.symptomService.getSymptoms().subscribe({
       next: (symptoms) => {
         this.symptoms = symptoms;
         this.clampCurrentPage();
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       },
       error: (err) => {
         this.toastr.error(err);
         //console.error('Failed to load symptoms', err);
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       }
     });
   }
@@ -101,21 +98,17 @@ export class SymptomManagementComponent implements OnInit {
     const confirmed = await this.confirmService.confirm(`Are you sure you want to delete "${symptom.name}"?`, 'Delete Symptom');
     if (!confirmed) return;
 
-    this.spinnerService.show(undefined, {
-      type: 'line-scale-party',
-      bdColor: 'rgba(2555,2555,255,0)',
-      color: '#333333'
-    });
+    this.spinnerService.show(this.spinnerName);
     this.symptomService.deleteSymptom(symptom.id).subscribe({
       next: () => {
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
         this.toastr.success('Symptom deleted successfully');
         this.loadSymptoms();
       },
       error: (err) => {
         this.toastr.error(err);
         //console.error('Failed to delete symptom', err);
-        this.spinnerService.hide();
+        this.spinnerService.hide(this.spinnerName);
       }
     });
   }

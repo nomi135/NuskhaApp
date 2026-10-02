@@ -7,9 +7,9 @@ namespace API.Controllers
     public class SymptomController(ISymptomService symptomService) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SymptomDto>>> GetSymptoms()
+        public async Task<ActionResult<IEnumerable<SymptomDto>>> GetSymptoms([FromQuery] int? diseaseId)
         {
-            return Ok(await symptomService.GetAllSymptomsAsync());
+            return Ok(await symptomService.GetAllSymptomsAsync(diseaseId));
         }
 
         [HttpGet("{id:int}")]

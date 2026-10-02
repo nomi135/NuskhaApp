@@ -1,0 +1,43 @@
+:host {
+  --nuskha-green: #1b5e3f;
+  --nuskha-green-dark: #123f2a;
+  --nuskha-green-light: #e8f3ec;
+}
+
+.filter-banner {
+  background-color: var(--nuskha-green-light);
+  border: 1px solid rgba(27, 94, 63, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+}
+
+.symptom-card {
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+.symptom-placeholder {
+  height: 160px;
+  background: linear-gradient(135deg, var(--nuskha-green-light) 0%, #ffffff 100%);
+  color: var(--nuskha-green);
+  font-size: 2.5rem;
+}
+
+.btn-outline-success {
+  color: var(--nuskha-green);
+  border-color: var(--nuskha-green);
+
+  &:hover {
+    background-color: var(--nuskha-green);
+    border-color: var(--nuskha-green);
+    color: #fff;
+  }
+}
+
+.input-group-text { border-right: none; }
+.input-group .form-control:focus { box-shadow: none; border-color: #ced4da; }
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .form-control { border-color: var(--nuskha-green); }

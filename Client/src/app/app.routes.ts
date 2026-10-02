@@ -11,9 +11,13 @@ import { SymptomManagementComponent } from './admin/symptom-management/symptom-m
 import { MedicineManagementComponent } from './admin/medicine-management/medicine-management.component';
 import { DoctorManagementComponent } from './admin/doctor-management/doctor-management.component';
 import { CountryManagementComponent } from './admin/country-management/country-management.component';
+import { DiseaseComponent } from './client/disease/disease.component';
+import { SymptomComponent } from './client/symptom/symptom.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
+    {path: 'disease', component: DiseaseComponent},
+    {path: 'symptom', component: SymptomComponent},
     {
         path: '',
         runGuardsAndResolvers: 'always',

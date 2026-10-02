@@ -4,7 +4,7 @@ namespace API.Interfaces
 {
     public interface ISymptomService
     {
-        Task<IEnumerable<SymptomDto>> GetAllSymptomsAsync();
+        Task<IEnumerable<SymptomDto>> GetAllSymptomsAsync(int? diseaseId = null);
         Task<SymptomDto?> GetSymptomByIdAsync(int id);
         Task<bool> CheckNameExistsAsync(string name);
         Task<SymptomDto> CreateSymptomAsync(SymptomFormDto dto);
