@@ -9,13 +9,15 @@ public class MedicineService(IUnitOfWork unitOfWork, ICacheService cacheService)
     private const string ListCacheKey = "medicines_all";
     private record CachedDoctorLink(int DoctorId, string DoctorName, bool IsGlobal, List<int> CountryIds, List<string> Potencies, List<SymptomLookupDto> Symptoms);
     private record CachedMedicine(int Id, string Name, string? Description, string? Caution, List<CachedDoctorLink> DoctorLinks);
-    public async Task<IEnumerable<MedicineDto>> GetAllMedicinesAsync(int? countryId = null)
+    public async Task<IEnumerable<MedicineDto>> GetAllMedicinesAsync(int? countryId = null, int? symptomId = null, int? doctorId = null)
     {
         var cachedMedicines = await cacheService.GetOrCreateAsync(ListCacheKey, async () =>
         {
             var medicines = await unitOfWork.MedicineRepository.GetMedicinesAsync();
             return medicines.Select(MapToCached).ToList();
         });
+
+        var anyFilterApplied = countryId.HasValue || symptomId.HasValue || doctorId.HasValue;
 
         var result = new List<MedicineDto>();
         foreach (var medicine in cachedMedicines)
@@ -25,6 +27,12 @@ public class MedicineService(IUnitOfWork unitOfWork, ICacheService cacheService)
             if (countryId.HasValue)
                 links = links.Where(l => l.IsGlobal || l.CountryIds.Contains(countryId.Value));
 
+            if (doctorId.HasValue)
+                links = links.Where(l => l.DoctorId == doctorId.Value);
+
+            if (symptomId.HasValue)
+                links = links.Where(l => l.Symptoms.Any(s => s.Id == symptomId.Value));
+
             var linkDtos = links.Select(l => new MedicineDoctorLinkDto
             {
                 DoctorId = l.DoctorId,
@@ -33,7 +41,7 @@ public class MedicineService(IUnitOfWork unitOfWork, ICacheService cacheService)
                 Symptoms = l.Symptoms
             }).ToList();
 
-            if (countryId.HasValue && linkDtos.Count == 0) continue;
+            if (anyFilterApplied && linkDtos.Count == 0) continue;
 
             result.Add(new MedicineDto
             {

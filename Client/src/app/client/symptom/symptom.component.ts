@@ -30,7 +30,7 @@ export class SymptomComponent implements OnInit {
   allSymptoms: Symptom[] = [];
   searchTerm = '';
   currentPage = 1;
-  pageSize = 6;
+  pageSize = 10;
 
   filterDiseaseId: number | null = null;
   filterDiseaseName: string | null = null;

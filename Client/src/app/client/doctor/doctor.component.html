@@ -1,0 +1,80 @@
+<div class="container py-5 position-relative">
+    <ngx-spinner name="doctor-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                 size="medium" color="#1b5e3f" type="ball-clip-rotate">
+    </ngx-spinner>
+
+    <div class="text-center mb-4" data-aos="fade-up">
+        <h2 class="fw-bold mb-2">Doctors</h2>
+        <p class="text-muted mb-0">Browse doctors and the medicines they prescribe.</p>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 ps-0" placeholder="Search doctors..."
+                       [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+            </div>
+        </div>
+    </div>
+
+    <div class="list-group shadow-sm mb-2">
+        <div class="list-group-item d-none d-md-grid doctor-grid fw-semibold text-muted small bg-light py-2">
+            <div>Doctor</div>
+            <div>Availability</div>
+            <div class="text-end">Action</div>
+        </div>
+
+        @for (doctor of pagedDoctors; track doctor.id) {
+            <div class="doctor-row list-group-item d-flex flex-column d-md-grid doctor-grid gap-3 py-3 px-3">
+                <div class="d-flex align-items-center gap-3 min-w-0">
+                    <div class="doctor-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <h6 class="mb-0 text-dark text-truncate">{{ doctor.name }}</h6>
+                </div>
+
+                <div class="d-flex flex-wrap align-content-center gap-1">
+                    @if (doctor.isGlobal) {
+                        <span class="badge bg-success-subtle text-success border">
+                            <i class="bi bi-globe2 me-1"></i>Global
+                        </span>
+                    } @else {
+                        @for (country of doctor.countries.slice(0, 3); track country.id) {
+                            <span class="badge bg-light text-dark border">{{ country.name }}</span>
+                        } @empty {
+                            <span class="text-muted small">No countries linked</span>
+                        }
+                        @if (doctor.countries.length > 3) {
+                            <span class="badge bg-light text-dark border">+{{ doctor.countries.length - 3 }} more</span>
+                        }
+                    }
+                </div>
+
+                <div class="text-md-end">
+                    <a [routerLink]="['/medicine']" [queryParams]="{ doctorId: doctor.id }"
+                       class="btn btn-outline-success btn-sm text-nowrap">
+                        <i class="bi bi-capsule me-1"></i>View Medicines
+                    </a>
+                </div>
+            </div>
+        } @empty {
+            <div class="list-group-item text-center text-muted py-5">
+                No doctors match "{{ searchTerm }}".
+            </div>
+        }
+    </div>
+
+    @if (filteredDoctors.length > pageSize) {
+        <div class="d-flex justify-content-center mt-4">
+            <app-pagination
+                [totalItems]="filteredDoctors.length"
+                [pageSize]="pageSize"
+                [currentPage]="currentPage"
+                (pageChange)="onPageChange($event)">
+            </app-pagination>
+        </div>
+    }
+</div>
