@@ -14,12 +14,14 @@ import { CountryManagementComponent } from './admin/country-management/country-m
 import { DiseaseComponent } from './client/disease/disease.component';
 import { SymptomComponent } from './client/symptom/symptom.component';
 import { DoctorComponent } from './client/doctor/doctor.component';
+import { MedicineComponent } from './client/medicine/medicine.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'disease', component: DiseaseComponent},
     {path: 'symptom', component: SymptomComponent},
     {path: 'doctor', component: DoctorComponent},
+    {path: 'medicine', component: MedicineComponent},
     {
         path: '',
         runGuardsAndResolvers: 'always',

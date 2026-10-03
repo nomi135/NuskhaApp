@@ -1,1 +1,115 @@
-<p>medicine works!</p>
+<div class="container py-5 position-relative">
+    <ngx-spinner name="medicine-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                 size="medium" color="#1b5e3f" type="ball-clip-rotate">
+    </ngx-spinner>
+
+    <div class="text-center mb-4" data-aos="fade-up">
+        @if (filterSymptomName && filterDoctorName) {
+            <h2 class="fw-bold mb-2">Medicines for {{ filterSymptomName }} by {{ filterDoctorName }}</h2>
+            <p class="text-muted mb-0">Potencies and symptoms as prescribed by this doctor.</p>
+        } @else if (filterSymptomName) {
+            <h2 class="fw-bold mb-2">Medicines for {{ filterSymptomName }}</h2>
+            <p class="text-muted mb-0">Medicines and doctor-specific potencies that treat this symptom.</p>
+        } @else if (filterDoctorName) {
+            <h2 class="fw-bold mb-2">Medicines by {{ filterDoctorName }}</h2>
+            <p class="text-muted mb-0">Medicines prescribed by this doctor, with their potencies and symptoms.</p>
+        } @else {
+            <h2 class="fw-bold mb-2">Medicines</h2>
+            <p class="text-muted mb-0">Browse medicines and the doctors, potencies, and symptoms linked to each.</p>
+        }
+    </div>
+
+    @if (filterSymptomName || filterDoctorName) {
+        <div class="filter-banner d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <i class="bi bi-funnel-fill text-success"></i>
+                @if (filterSymptomName) {
+                    <span class="small">Symptom: <strong>{{ filterSymptomName }}</strong></span>
+                }
+                @if (filterDoctorName) {
+                    <span class="small">Doctor: <strong>{{ filterDoctorName }}</strong></span>
+                }
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearFilters()">
+                <i class="bi bi-x-lg me-1"></i>Clear Filters
+            </button>
+        </div>
+    }
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 ps-0" placeholder="Search medicines..."
+                       [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+            </div>
+        </div>
+    </div>
+
+    <div class="list-group shadow-sm mb-2">
+        <div class="list-group-item d-none d-md-grid medicine-grid fw-semibold text-muted small bg-light py-2">
+            <div>Medicine</div>
+            <div>Doctors, Potencies &amp; Symptoms</div>
+        </div>
+
+        @for (medicine of visibleMedicines; track medicine.id) {
+            <div class="medicine-row list-group-item d-flex flex-column d-md-grid medicine-grid gap-3 py-3 px-3">
+                <div class="min-w-0">
+                    <h6 class="mb-1 text-dark">{{ medicine.name }}</h6>
+                    @if (medicine.description) {
+                        <p class="text-muted small mb-1">{{ medicine.description }}</p>
+                    }
+                    @if (medicine.caution) {
+                        <div class="caution-badge d-inline-flex align-items-center gap-1 small">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            {{ medicine.caution }}
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex flex-column gap-2">
+                    @for (link of relevantLinks(medicine); track link.doctorId) {
+                        <div class="doctor-link-block">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <i class="bi bi-person-badge text-success"></i>
+                                <span class="fw-semibold small">{{ link.doctorName }}</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-1 mb-1">
+                                @for (potency of link.potencies; track potency) {
+                                    <span class="badge bg-success-subtle text-success border">{{ potency }}</span>
+                                } @empty {
+                                    <span class="text-muted small">No potencies listed</span>
+                                }
+                            </div>
+                            <div class="d-flex flex-wrap gap-1">
+                                @for (symptom of link.symptoms; track symptom.id) {
+                                    <span class="badge bg-light text-dark border">{{ symptom.name }}</span>
+                                }
+                            </div>
+                        </div>
+                    } @empty {
+                        <span class="text-muted small">No matching doctor details</span>
+                    }
+                </div>
+            </div>
+        } @empty {
+            <div class="list-group-item text-center text-muted py-5">
+                @if (filterSymptomName || filterDoctorName) {
+                    No medicines match this filter yet.
+                } @else {
+                    No medicines match "{{ searchTerm }}".
+                }
+            </div>
+        }
+    </div>
+
+    @if (hasMore) {
+        <div appInfiniteScroll (scrolled)="loadMore()" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-success" role="status">
+                <span class="visually-hidden">Loading more...</span>
+            </div>
+        </div>
+    }
+</div>

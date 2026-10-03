@@ -27,7 +27,7 @@
             <div class="text-end">Action</div>
         </div>
 
-        @for (doctor of pagedDoctors; track doctor.id) {
+        @for (doctor of visibleDoctors; track doctor.id) {
             <div class="doctor-row list-group-item d-flex flex-column d-md-grid doctor-grid gap-3 py-3 px-3">
                 <div class="d-flex align-items-center gap-3 min-w-0">
                     <div class="doctor-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
@@ -67,14 +67,11 @@
         }
     </div>
 
-    @if (filteredDoctors.length > pageSize) {
-        <div class="d-flex justify-content-center mt-4">
-            <app-pagination
-                [totalItems]="filteredDoctors.length"
-                [pageSize]="pageSize"
-                [currentPage]="currentPage"
-                (pageChange)="onPageChange($event)">
-            </app-pagination>
+    @if (hasMore) {
+        <div appInfiniteScroll (scrolled)="loadMore()" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-success" role="status">
+                <span class="visually-hidden">Loading more...</span>
+            </div>
         </div>
     }
 </div>

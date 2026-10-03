@@ -2,16 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { DoctorService } from '../../_services/doctor.service';
 import { ToastrService } from 'ngx-toastr';
 import { Doctor } from '../../_models/doctor';
+import { InfiniteScrollDirective } from '../../_shared/infinite-scroll/infinite-scroll.directive';
 
 @Component({
   selector: 'app-doctor',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PaginationComponent, NgxSpinnerModule],
+  imports: [CommonModule, FormsModule, RouterLink, NgxSpinnerModule, InfiniteScrollDirective],
   templateUrl: './doctor.component.html',
   styleUrl: './doctor.component.scss'
 })
@@ -23,8 +23,8 @@ export class DoctorComponent implements OnInit {
 
   allDoctors: Doctor[] = [];
   searchTerm = '';
-  currentPage = 1;
-  pageSize = 10;
+  batchSize = 10;
+  visibleCount = this.batchSize;
 
   ngOnInit(): void {
     this.loadDoctors();
@@ -50,17 +50,21 @@ export class DoctorComponent implements OnInit {
     return this.allDoctors.filter(d => d.name.toLowerCase().includes(term));
   }
 
-  get pagedDoctors(): Doctor[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredDoctors.slice(start, start + this.pageSize);
+  get visibleDoctors(): Doctor[] {
+    return this.filteredDoctors.slice(0, this.visibleCount);
+  }
+
+  get hasMore(): boolean {
+    return this.visibleCount < this.filteredDoctors.length;
   }
 
   onSearchChange(): void {
-    this.currentPage = 1;
+    this.visibleCount = this.batchSize;
   }
 
-  onPageChange(page: number): void {
-    this.currentPage = page;
+  loadMore(): void {
+    if (!this.hasMore) return;
+    this.visibleCount += this.batchSize;
   }
 
 }

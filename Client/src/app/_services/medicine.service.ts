@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
@@ -11,8 +11,12 @@ export class MedicineService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
 
-  getMedicines(): Observable<Medicine[]> {
-    return this.http.get<Medicine[]>(this.baseUrl + 'medicine');
+  getMedicines(countryId?: number, symptomId?: number, doctorId?: number): Observable<Medicine[]> {
+    let params = new HttpParams();
+    if (countryId != null) params = params.set('countryId', countryId.toString());
+    if (symptomId != null) params = params.set('symptomId', symptomId.toString());
+    if (doctorId != null) params = params.set('doctorId', doctorId.toString());
+    return this.http.get<Medicine[]>(this.baseUrl + 'medicine', { params });
   }
 
   getMedicine(id: number): Observable<Medicine> {

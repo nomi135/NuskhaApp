@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { PaginationComponent } from '../../_shared/pagination/pagination/pagination.component';
 import { SymptomService } from '../../_services/symptom.service';
 import { DiseaseService } from '../../_services/disease.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Symptom } from '../../_models/symptom';
 import { environment } from '../../../environments/environment';
+import { InfiniteScrollDirective } from '../../_shared/infinite-scroll/infinite-scroll.directive';
 
 @Component({
   selector: 'app-symptom',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PaginationComponent, NgxSpinnerModule],
+  imports: [CommonModule, FormsModule, RouterLink, NgxSpinnerModule, InfiniteScrollDirective],
   templateUrl: './symptom.component.html',
   styleUrl: './symptom.component.scss'
 })
@@ -29,8 +29,8 @@ export class SymptomComponent implements OnInit {
 
   allSymptoms: Symptom[] = [];
   searchTerm = '';
-  currentPage = 1;
-  pageSize = 10;
+  batchSize = 10;
+  visibleCount = this.batchSize;
 
   filterDiseaseId: number | null = null;
   filterDiseaseName: string | null = null;
@@ -42,7 +42,7 @@ export class SymptomComponent implements OnInit {
       const diseaseIdParam = params.get('diseaseId');
       this.filterDiseaseId = diseaseIdParam ? Number(diseaseIdParam) : null;
       this.searchTerm = '';
-      this.currentPage = 1;
+      this.visibleCount = this.batchSize;
       this.loadSymptoms();
     });
   }
@@ -77,20 +77,25 @@ export class SymptomComponent implements OnInit {
     return this.allSymptoms.filter(s => s.name.toLowerCase().includes(term));
   }
 
-  get pagedSymptoms(): Symptom[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredSymptoms.slice(start, start + this.pageSize);
+  get visibleSymptoms(): Symptom[] {
+    return this.filteredSymptoms.slice(0, this.visibleCount);
+  }
+
+  get hasMore(): boolean {
+    return this.visibleCount < this.filteredSymptoms.length;
   }
 
   onSearchChange(): void {
-    this.currentPage = 1;
+    this.visibleCount = this.batchSize;
   }
 
-  onPageChange(page: number): void {
-    this.currentPage = page;
+  loadMore(): void {
+    if (!this.hasMore) return;
+    this.visibleCount += this.batchSize;
   }
 
   clearFilter(): void {
     this.router.navigate(['/symptom']);
   }
+
 }
