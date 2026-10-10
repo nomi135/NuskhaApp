@@ -28,6 +28,11 @@
   background-color: #fafafa;
 }
 
+.symptom-options {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
 .potency-input-wrapper {
   height: auto;
   min-height: calc(1.5em + 0.5rem + 2px);

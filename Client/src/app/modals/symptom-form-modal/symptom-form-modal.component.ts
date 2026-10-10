@@ -21,7 +21,8 @@ import { environment } from '../../../environments/environment';
 })
 export class SymptomFormModalComponent implements OnInit {
   @Input() symptom: Symptom | null = null;
-  @Output() saved = new EventEmitter<void>();
+  @Input() initialName = '';
+  @Output() saved = new EventEmitter<Symptom>();
 
   selectedFile: File | null = null;
   imagePreview: string | null = null;
@@ -54,6 +55,9 @@ export class SymptomFormModalComponent implements OnInit {
         this.imagePreview = this.baseUrl + this.symptom.imageUrl;
       }
       this.selectedDiseaseIds = this.symptom.diseases.map(d => d.id);
+    }
+    else if (this.initialName) {
+      this.symptomForm.patchValue({ name: this.initialName });
     }
   }
 
@@ -139,10 +143,10 @@ export class SymptomFormModalComponent implements OnInit {
         : this.symptomService.createSymptom(model);
 
       request$.subscribe({
-        next: () => {
+        next: (result) => {
           this.isSubmitting = false;
           this.spinnerService.hide(this.spinnerName);
-          this.saved.emit();
+          this.saved.emit(result);
            this.successMessage = "Symptom added successfully."
           if(this.isEditMode){
             this.successMessage = "Symptom updated successfully.";

@@ -13,6 +13,7 @@ import { SymptomService } from '../../_services/symptom.service';
 import { DoctorService } from '../../_services/doctor.service';
 import { TextInputComponent } from '../../_forms/text-input/text-input.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { SymptomFormModalComponent } from '../symptom-form-modal/symptom-form-modal.component';
 
 interface DoctorLinkData {
   potencies: string[];
@@ -109,11 +110,12 @@ export class MedicineFormModalComponent implements OnInit {
     });
   }
 
-  loadSymptoms(): void {
+  loadSymptoms(afterLoad?: () => void): void {
     this.spinnerService.show(this.spinnerName);
     this.symptomService.getSymptoms().subscribe({
       next: (symptoms) => {
         this.symptoms = symptoms;
+        afterLoad?.();
         this.spinnerService.hide(this.spinnerName);
       },
       error: (err) => {
@@ -211,6 +213,35 @@ export class MedicineFormModalComponent implements OnInit {
       .filter(s => row.selectedSymptomIds.includes(s.id))
       .map(s => s.name)
       .join(', ');
+  }
+
+  // Offer "add symptom" when what the user typed has no exact match
+  // (or when no symptoms exist at all yet).
+  canAddSymptom(row: DoctorLinkData): boolean {
+    const term = row.symptomSearchTerm.trim().toLowerCase();
+    if (!term) return this.symptoms.length === 0;
+    return !this.symptoms.some(s => s.name.trim().toLowerCase() === term);
+  }
+
+  openAddSymptomModal(doctorId: number): void {
+    const row = this.getRowData(doctorId);
+    const typedName = row.symptomSearchTerm.trim();
+
+    // Stacks on top of this modal; this modal and its data stay intact underneath.
+    const symptomModalRef = this.modalService.show(SymptomFormModalComponent, {
+      class: 'modal-dialog-centered',
+      initialState: { symptom: null, initialName: typedName }
+    });
+
+    symptomModalRef.content?.saved.subscribe((created: Symptom) => {
+      this.loadSymptoms(() => {
+        // Auto-select the new symptom for this doctor, if the API returned it
+        if (created?.id && !row.selectedSymptomIds.includes(created.id)) {
+          row.selectedSymptomIds = [...row.selectedSymptomIds, created.id];
+        }
+        row.symptomSearchTerm = '';
+      });
+    });
   }
 
   // ===== Duplicate name check =====

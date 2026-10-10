@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { InfiniteScrollDirective } from '../../_shared/infinite-scroll/infinite-scroll.directive';
 import { MedicineService } from '../../_services/medicine.service';
@@ -13,7 +13,7 @@ import { Medicine, MedicineDoctorLink } from '../../_models/medicine';
 @Component({
   selector: 'app-medicine',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NgxSpinnerModule, InfiniteScrollDirective],
+  imports: [CommonModule, FormsModule, NgxSpinnerModule, InfiniteScrollDirective],
   templateUrl: './medicine.component.html',
   styleUrl: './medicine.component.scss'
 })

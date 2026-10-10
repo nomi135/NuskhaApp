@@ -110,9 +110,27 @@
                                             </div>
                                         </li>
                                     } @empty {
-                                        <li class="text-muted small px-2">No symptoms match "{{ getRowData(doctor.id).symptomSearchTerm }}".</li>
+                                        <li class="text-muted small px-2">
+                                            @if (getRowData(doctor.id).symptomSearchTerm.trim()) {
+                                                No symptoms match "{{ getRowData(doctor.id).symptomSearchTerm.trim() }}".
+                                            } @else {
+                                                No symptoms available yet.
+                                            }
+                                        </li>
                                     }
                                 </ul>
+                                @if (canAddSymptom(getRowData(doctor.id))) {
+                                    <hr class="my-2">
+                                    <button type="button" class="btn btn-sm btn-outline-success w-100"
+                                            (click)="openAddSymptomModal(doctor.id)">
+                                        <i class="bi bi-plus-lg me-1"></i>
+                                        @if (getRowData(doctor.id).symptomSearchTerm.trim()) {
+                                            Add "{{ getRowData(doctor.id).symptomSearchTerm.trim() }}" as new symptom
+                                        } @else {
+                                            Add new symptom
+                                        }
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
