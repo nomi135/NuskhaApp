@@ -74,7 +74,11 @@ export class SymptomComponent implements OnInit {
   get filteredSymptoms(): Symptom[] {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) return this.allSymptoms;
-    return this.allSymptoms.filter(s => s.name.toLowerCase().includes(term));
+
+    return this.allSymptoms.filter(s =>
+      s.name.toLowerCase().includes(term) ||
+      (s.diseases ?? []).some(d => d.name.toLowerCase().includes(term))
+    );
   }
 
   get visibleSymptoms(): Symptom[] {

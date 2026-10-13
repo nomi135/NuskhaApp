@@ -47,7 +47,12 @@ export class DoctorComponent implements OnInit {
   get filteredDoctors(): Doctor[] {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) return this.allDoctors;
-    return this.allDoctors.filter(d => d.name.toLowerCase().includes(term));
+
+    return this.allDoctors.filter(d =>
+      d.name.toLowerCase().includes(term) ||
+      (d.isGlobal && 'global'.includes(term)) ||
+      (!d.isGlobal && (d.countries ?? []).some(c => c.name.toLowerCase().includes(term)))
+    );
   }
 
   get visibleDoctors(): Doctor[] {

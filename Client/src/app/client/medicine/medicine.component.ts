@@ -90,7 +90,19 @@ export class MedicineComponent implements OnInit {
   get filteredMedicines(): Medicine[] {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) return this.allMedicines;
-    return this.allMedicines.filter(m => m.name.toLowerCase().includes(term));
+
+    const matches = (text?: string | null) => !!text && text.toLowerCase().includes(term);
+
+    return this.allMedicines.filter(m =>
+      matches(m.name) ||
+      matches(m.description) ||
+      matches(m.caution) ||
+      this.relevantLinks(m).some(link =>
+        matches(link.doctorName) ||
+        (link.potencies ?? []).some(p => matches(p)) ||
+        (link.symptoms ?? []).some(s => matches(s.name))
+      )
+    );
   }
 
   get visibleMedicines(): Medicine[] {
