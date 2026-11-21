@@ -19,29 +19,59 @@
 
         <div class="mb-4">
           <h2 class="fw-bold mb-1">Login</h2>
+          <p class="text-muted mb-0">Practitioners sign in with their Google account.</p>
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form" autocomplete="off">
-          <ngx-spinner type="line-scale-party" [fullScreen]="true"></ngx-spinner>
-          <div class="mb-3">
-            <app-text-input
-                [formControl]="$any(loginForm.controls['username'])"
-                [label]="'Username'">
-            </app-text-input>
-          </div>
+        <!-- Practitioner login (Google). The button container always stays in the DOM. -->
+        <div class="google-login position-relative text-center">
+          <ngx-spinner name="login-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                       size="medium" color="#1b5e3f" type="ball-clip-rotate">
+          </ngx-spinner>
 
-          <div class="mb-4">
-            <app-text-input
-                [formControl]="$any(loginForm.controls['password'])"
-                [label]="'Password'"
-                [type]="'password'">
-            </app-text-input>
-          </div>
+          <div #googleButton class="d-flex justify-content-center"></div>
 
-          <button [disabled]="!loginForm.valid" class="btn btn-success w-100 py-2" type="submit">
-            Login
+          <p class="text-muted small mt-3 mb-0">
+            New here?
+            <a routerLink="/signup" class="login-link fw-semibold">Create a practitioner account</a>
+          </p>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Admin login -->
+        <div class="text-center">
+          <button type="button" class="btn btn-link btn-sm text-decoration-none"
+                  (click)="toggleAdminForm()"
+                  [attr.aria-expanded]="showAdminForm"
+                  aria-controls="adminLoginForm">
+            Admin login
+            <i class="bi ms-1" [class.bi-chevron-down]="!showAdminForm" [class.bi-chevron-up]="showAdminForm"></i>
           </button>
-        </form>
+        </div>
+
+        @if (showAdminForm) {
+          <form id="adminLoginForm" [formGroup]="loginForm" (ngSubmit)="login()" class="login-form mt-3" autocomplete="off">
+            <ngx-spinner type="line-scale-party" [fullScreen]="true"></ngx-spinner>
+            <div class="mb-3">
+              <app-text-input
+                  [formControl]="$any(loginForm.controls['username'])"
+                  [label]="'Username'">
+              </app-text-input>
+            </div>
+
+            <div class="mb-4">
+              <app-text-input
+                  [formControl]="$any(loginForm.controls['password'])"
+                  [label]="'Password'"
+                  [type]="'password'">
+              </app-text-input>
+            </div>
+
+            <button [disabled]="!loginForm.valid" class="btn btn-success w-100 py-2" type="submit">
+              Login
+            </button>
+          </form>
+        }
 
       </div>
     </div>

@@ -15,6 +15,8 @@ import { DiseaseComponent } from './client/disease/disease.component';
 import { SymptomComponent } from './client/symptom/symptom.component';
 import { DoctorComponent } from './client/doctor/doctor.component';
 import { MedicineComponent } from './client/medicine/medicine.component';
+import { DisclaimerComponent } from './disclaimer/disclaimer.component';
+import { PractitionerSignupComponent } from './practitioner-signup/practitioner-signup.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -22,6 +24,8 @@ export const routes: Routes = [
     {path: 'symptom', component: SymptomComponent},
     {path: 'doctor', component: DoctorComponent},
     {path: 'medicine', component: MedicineComponent},
+    {path: 'disclaimer', component: DisclaimerComponent},
+    {path: 'signup', component: PractitionerSignupComponent},
     {
         path: '',
         runGuardsAndResolvers: 'always',

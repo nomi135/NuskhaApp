@@ -1,1 +1,54 @@
-<p>disclaimer works!</p>
+@if (mode() === 'banner') {
+    <div class="disclaimer-banner d-flex align-items-start gap-2" role="note">
+        <i class="bi bi-info-circle-fill flex-shrink-0"></i>
+        <span class="small">
+            <strong>For qualified practitioners only.</strong>
+            Reference information, not a substitute for clinical judgment. Verify before prescribing.
+            <a routerLink="/disclaimer" class="disclaimer-link">Read the full disclaimer</a>
+        </span>
+    </div>
+} @else {
+    <div class="container py-5">
+        <div class="disclaimer-page mx-auto">
+            <div class="text-center mb-4" data-aos="fade-up">
+                <div class="disclaimer-hero-icon mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h2 class="fw-bold mb-2">Disclaimer</h2>
+                <p class="text-muted mb-1">Please read this before using RxHomeoPro.</p>
+                <p class="text-muted small mb-0">Last updated: {{ lastUpdated }}</p>
+            </div>
+
+            <div class="key-notice d-flex align-items-start gap-3 mb-4" role="note">
+                <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                <p class="mb-0">
+                    <strong>RxHomeoPro provides reference information for qualified practitioners.</strong>
+                    It does not replace clinical judgment. Always verify before you prescribe.
+                </p>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                @for (section of sections; track section.title) {
+                    <section class="disclaimer-item d-flex align-items-start gap-3">
+                        <div class="disclaimer-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                            <i class="bi {{ section.icon }}"></i>
+                        </div>
+                        <div>
+                            <h3 class="h6 fw-semibold mb-1">{{ section.title }}</h3>
+                            <p class="text-muted mb-0">{{ section.text }}</p>
+                        </div>
+                    </section>
+                }
+            </div>
+
+            <p class="text-muted small text-center mt-4 mb-0">
+                Questions about this disclaimer? Use the contact details in the footer.
+            </p>
+            <div class="text-center mt-3">
+                <a routerLink="/" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+}

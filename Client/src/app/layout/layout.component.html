@@ -45,9 +45,13 @@
                 </ul>
                 <ul class="navbar-nav ms-lg-3 mb-2 mb-lg-0 align-items-lg-center">
                     @if (!accountService.currentUser()) {
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-success btn-sm px-3" routerLink="/signup"
+                            (click)="setActiveSection('')">Sign Up</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/login" routerLinkActive="active"
-                               (click)="setActiveSection('')">Login</a>
+                               (click)="setActiveSection('')">Log In</a>
                         </li>
                     }
                     @if (accountService.currentUser()?.roles?.includes('Admin')) {
@@ -58,6 +62,16 @@
                     }
                     @if (accountService.currentUser()) 
                     {
+                        @if (accountService.currentUser()?.displayName) {
+                            <li class="nav-item d-flex align-items-center gap-2 me-lg-2">
+                                @if (avatarUrl) {
+                                    <img [src]="avatarUrl" alt="" class="nav-avatar rounded-circle">
+                                }
+                                <span class="welcome-text small text-muted text-truncate">
+                                    Welcome, <strong class="text-dark">{{ accountService.currentUser()?.displayName }}</strong>
+                                </span>
+                            </li>
+                        }
                         <li class="nav-item ms-lg-2">
                             <a class="btn btn-outline-success btn-sm px-3" href="#" (click)="logout()">Logout</a>
                         </li>
@@ -122,9 +136,13 @@
                     <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/doctor" routerLinkActive="active">Doctors</a></li>
                     <li class="mb-2"><a class="text-decoration-none text-body" routerLink="/medicine" routerLinkActive="active">Medicines</a></li>
                     @if (!accountService.currentUser()) {
+                         <li class="mb-2">
+                            <a class="text-decoration-none text-body" routerLink="/signup" routerLinkActive="active"
+                            (click)="setActiveSection('')">Sign Up</a>
+                        </li>
                         <li class="mb-2">
                             <a class="text-decoration-none text-body" routerLink="/login" routerLinkActive="active"
-                               (click)="setActiveSection('')">Login</a>
+                               (click)="setActiveSection('')">Log In</a>
                         </li>
                     }
                     @if (accountService.currentUser()) {
@@ -152,6 +170,8 @@
 
         <p class="text-center small text-muted mb-0">
             ©<span>{{currentYear}}</span> <strong class="text-success"> RxHomeoPro.</strong> All Rights Reserved
+            <span class="mx-2">|</span>
+            <a routerLink="/disclaimer" class="text-decoration-none text-muted">Disclaimer</a>
         </p>
     </div>
 </footer>

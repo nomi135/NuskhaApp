@@ -9,11 +9,12 @@ import { SymptomService } from '../../_services/symptom.service';
 import { DoctorService } from '../../_services/doctor.service';
 import { ToastrService } from 'ngx-toastr';
 import { Medicine, MedicineDoctorLink } from '../../_models/medicine';
+import { DisclaimerComponent } from '../../disclaimer/disclaimer.component';
 
 @Component({
   selector: 'app-medicine',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxSpinnerModule, InfiniteScrollDirective],
+  imports: [CommonModule, FormsModule, NgxSpinnerModule, InfiniteScrollDirective, DisclaimerComponent],
   templateUrl: './medicine.component.html',
   styleUrl: './medicine.component.scss'
 })

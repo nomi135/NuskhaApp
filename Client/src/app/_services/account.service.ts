@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../_models/user';
 import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { PractitionerAuth } from '../_models/practitioner';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,21 @@ export class AccountService {
   setCurrentUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
+  }
+
+  // Practitioner signup/login returns { token, practitioner } rather than a User,
+  // so map it into the shape the rest of the app already uses.
+  setPractitionerSession(auth: PractitionerAuth) {
+    const user = {
+       userName: auth.practitioner.email,
+       token: auth.token,
+       roles: ['Practitioner'],
+       displayName: auth.practitioner.name,
+       pictureUrl: auth.practitioner.pictureUrl
+    } as User;
+    localStorage.setItem('user', JSON.stringify(user));
+
+    this.setCurrentUser(user);
   }
 
   logout(){

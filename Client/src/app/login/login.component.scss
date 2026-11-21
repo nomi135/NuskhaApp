@@ -67,3 +67,21 @@
     }
   }
 }
+
+.login-link {
+  color: var(--nuskha-green);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--nuskha-green-dark);
+    text-decoration: underline;
+  }
+}
+
+.btn-link {
+  color: var(--nuskha-green);
+
+  &:hover {
+    color: var(--nuskha-green-dark);
+  }
+}

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AccountService } from '../_services/account.service';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-layout',
@@ -17,6 +18,8 @@ export class LayoutComponent implements OnInit {
   accountService = inject(AccountService);
   private router = inject(Router);
   currentRoute: string = '';
+  // Picture paths from the API are relative, so prefix them with the API host
+  baseUrl = environment.apiUrl.replace(/\/?api\/?$/, '');
 
   activeSection = signal<string>('home');
 
@@ -30,6 +33,11 @@ export class LayoutComponent implements OnInit {
         this.currentRoute = event.urlAfterRedirects;
       }
     });
+  }
+
+  get avatarUrl(): string | null {
+    const path = this.accountService.currentUser()?.pictureUrl;
+    return path ? this.baseUrl + path : null;
   }
   
   logout(){

@@ -1,0 +1,166 @@
+<div class="container py-5">
+    <div class="signup-card card border-0 shadow-sm mx-auto position-relative" data-aos="fade-up">
+        <ngx-spinner name="signup-spinner" [fullScreen]="false" bdColor="rgba(255,255,255,0.7)"
+                     size="medium" color="#1b5e3f" type="ball-clip-rotate">
+        </ngx-spinner>
+
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="signup-icon mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <h2 class="fw-bold mb-1">Practitioner sign up</h2>
+                <p class="text-muted mb-0">Create your practitioner account to get started.</p>
+            </div>
+
+            <!-- Step 1: Google sign-in. Stays in the DOM (just hidden) once signed in,
+                 so Google's rendered button isn't lost if the user switches account. -->
+            <div class="google-step text-center" [class.d-none]="googleCredential">
+                <p class="fw-semibold mb-1">Sign in with your Google account</p>
+                <p class="text-muted small mb-3">
+                    We use Google to verify who you are. We never see your Google password.
+                </p>
+                <div #googleButton class="d-flex justify-content-center"></div>
+            </div>
+
+            <!-- Step 2: details form, shown after Google sign-in -->
+            @if (googleCredential) {
+                <div class="google-chip d-flex align-items-center gap-3 mb-4">
+                    @if (googleCredential.picture) {
+                        <img [src]="googleCredential.picture" alt="" class="google-avatar rounded-circle"
+                             referrerpolicy="no-referrer">
+                    } @else {
+                        <div class="google-avatar rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    }
+                    <div class="min-w-0 flex-grow-1">
+                        <div class="fw-semibold text-truncate">{{ googleCredential.name }}</div>
+                        <div class="text-muted small text-truncate">{{ googleCredential.email }}</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-decoration-none" (click)="useDifferentAccount()">
+                        Change
+                    </button>
+                </div>
+
+                <form [formGroup]="signupForm" (ngSubmit)="submit()" novalidate autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label d-block">Name <span class="text-danger">*</span></label>
+                        <app-text-input
+                            [formControl]="$any(signupForm.controls['name'])"
+                            [label]="'Name'">
+                        </app-text-input>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Gender <span class="text-danger">*</span></label>
+                        <div class="btn-group" role="group" aria-label="Gender">
+                            @for (g of genderOptions; track g) {
+                                <input type="radio" class="btn-check" formControlName="gender" [value]="g"
+                                       [id]="'gender-' + g" autocomplete="off">
+                                <label class="btn btn-outline-success" [for]="'gender-' + g">{{ g }}</label>
+                            }
+                        </div>
+                        @if (signupForm.controls['gender'].invalid && (submitted || signupForm.controls['gender'].touched)) {
+                            <div class="invalid-feedback d-block">Please select your gender.</div>
+                        }
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="country" formControlName="countryId"
+                                [class.is-invalid]="signupForm.controls['countryId'].invalid && (submitted || signupForm.controls['countryId'].touched)">
+                            <option [ngValue]="null">Select your country</option>
+                            @for (country of countries; track country.id) {
+                                <option [ngValue]="country.id">{{ country.name }}</option>
+                            }
+                        </select>
+                        <label for="country">Country</label>
+                        <div class="invalid-feedback">Please select your country.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">WhatsApp number <span class="text-danger">*</span></label>
+                        <app-text-input
+                            [formControl]="$any(signupForm.controls['whatsAppNumber'])"
+                            [label]="'WhatsApp number'"
+                            [type]="'tel'">
+                        </app-text-input>
+                        @if (signupForm.controls['whatsAppNumber'].hasError('pattern')
+                             && (submitted || signupForm.controls['whatsAppNumber'].touched)) {
+                            <div class="invalid-feedback d-block">
+                                Use international format, e.g. +923001234567.
+                            </div>
+                        } @else {
+                            <div class="form-text">International format with country code, e.g. +923001234567.</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Qualification</label>
+                        <app-text-input
+                            [formControl]="$any(signupForm.controls['qualification'])"
+                            [label]="'Qualification'">
+                        </app-text-input>
+                        <div class="form-text">Optional, e.g. BHMS, DHMS.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">City</label>
+                        <app-text-input
+                            [formControl]="$any(signupForm.controls['city'])"
+                            [label]="'City'">
+                        </app-text-input>
+                        <div class="form-text">Optional.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Profile picture <span class="text-muted small">(optional)</span>
+                        </label>
+                        <div class="d-flex align-items-center gap-3">
+                            @if (picturePreview) {
+                                <img [src]="picturePreview" alt="Picture preview" class="picture-preview rounded-circle flex-shrink-0">
+                            } @else {
+                                <div class="picture-placeholder rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                            }
+                            <input type="file" class="form-control" accept="image/jpeg,image/png,image/webp"
+                                   [class.is-invalid]="!!pictureError"
+                                   (change)="onPictureSelected($event)">
+                        </div>
+                        @if (pictureError) {
+                            <div class="invalid-feedback d-block">{{ pictureError }}</div>
+                        } @else {
+                            <div class="form-text">JPEG, PNG or WebP, up to 5 MB.</div>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2" [disabled]="isSubmitting">
+                        @if (isSubmitting) {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Create account
+                    </button>
+
+                    <p class="text-muted small text-center mt-3 mb-0">
+                        By signing up you acknowledge our
+                        <a routerLink="/disclaimer" class="signup-link">Disclaimer</a>.
+                    </p>
+                </form>
+            }
+
+            <p class="text-center text-muted mt-4 mb-0">
+                Already registered?
+                <a routerLink="/login" class="signup-link fw-semibold">Log in</a>
+            </p>
+
+            <!-- Required by Google when the reCAPTCHA badge is hidden (see styles.scss) -->
+            <p class="recaptcha-note text-center text-muted mt-3 mb-0">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.
+            </p>
+        </div>
+    </div>
+</div>

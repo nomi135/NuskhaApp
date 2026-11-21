@@ -443,3 +443,14 @@ footer {
     }
   }
 }
+
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.welcome-text {
+  max-width: 180px;
+}
