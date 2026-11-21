@@ -15,6 +15,7 @@ namespace API.Data
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<MedicineDoctor> MedicineDoctors { get; set; }
         public DbSet<Country> Countries { get; set; }
+        public DbSet<Practitioner> Practitioners { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -101,6 +102,33 @@ namespace API.Data
                     (c1, c2) => c1!.SequenceEqual(c2!),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
+
+            // Practitioner <-> AppUser: one-to-one, deleting the user removes the profile
+            builder.Entity<Practitioner>()
+                .HasOne(p => p.AppUser)
+                .WithOne()
+                .HasForeignKey<Practitioner>(p => p.AppUserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Practitioner -> Country: a country in use can't be deleted
+            builder.Entity<Practitioner>()
+                .HasOne(p => p.Country)
+                .WithMany()
+                .HasForeignKey(p => p.CountryId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Store gender as readable text ("Male") instead of an int
+            builder.Entity<Practitioner>()
+                .Property(p => p.Gender)
+                .HasConversion<string>()
+                .HasMaxLength(10);
+
+            builder.Entity<Practitioner>().Property(p => p.Name).HasMaxLength(100);
+            builder.Entity<Practitioner>().Property(p => p.City).HasMaxLength(100);
+            builder.Entity<Practitioner>().Property(p => p.Qualification).HasMaxLength(500);
+            builder.Entity<Practitioner>().Property(p => p.WhatsAppNumber).HasMaxLength(20);
 
         }
     }

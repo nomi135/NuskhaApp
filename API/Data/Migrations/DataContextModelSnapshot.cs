@@ -263,6 +263,56 @@ namespace API.Data.Migrations
                     b.ToTable("MedicineDoctors");
                 });
 
+            modelBuilder.Entity("API.Entities.Practitioner", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PicturePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Qualification")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("WhatsAppNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("Practitioners");
+                });
+
             modelBuilder.Entity("API.Entities.Symptom", b =>
                 {
                     b.Property<int>("Id")
@@ -455,6 +505,25 @@ namespace API.Data.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Medicine");
+                });
+
+            modelBuilder.Entity("API.Entities.Practitioner", b =>
+                {
+                    b.HasOne("API.Entities.AppUser", "AppUser")
+                        .WithOne()
+                        .HasForeignKey("API.Entities.Practitioner", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("CountryDoctor", b =>

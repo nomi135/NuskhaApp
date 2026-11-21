@@ -1,9 +1,11 @@
 ﻿using API.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace API.Data
 {
     public class UnitOfWork(DataContext context, IUserRepository userRepository, IDiseaseRepository diseaseRepository, ISymptomRepository symptomRepository, 
-                            IMedicineRepository medicineRepository, IDoctorRepository doctorRepository, ICountryRepository countryRepository) : IUnitOfWork
+                            IMedicineRepository medicineRepository, IDoctorRepository doctorRepository, ICountryRepository countryRepository,
+                            IPractitionerRepository practitionerRepository) : IUnitOfWork
     {
         public IUserRepository UserRepository => userRepository;
         public IDiseaseRepository DiseaseRepository => diseaseRepository;
@@ -11,6 +13,9 @@ namespace API.Data
         public IMedicineRepository MedicineRepository => medicineRepository;
         public IDoctorRepository DoctorRepository => doctorRepository;
         public ICountryRepository CountryRepository => countryRepository;
+        public IPractitionerRepository PractitionerRepository => practitionerRepository;
+
+        public Task<IDbContextTransaction> BeginTransactionAsync() => context.Database.BeginTransactionAsync();
 
         public async Task<bool> Complete()
         {

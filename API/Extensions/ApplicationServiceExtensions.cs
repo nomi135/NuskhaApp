@@ -21,6 +21,7 @@ namespace API.Extensions
             services.AddScoped<IMedicineRepository, MedicineRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<IPractitionerRepository, PractitionerRepository>();
             services.AddCors();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<ITokenService, TokenService>();
@@ -29,7 +30,15 @@ namespace API.Extensions
             services.AddScoped<IMedicineService, MedicineService>();
             services.AddScoped<IDoctorService, DoctorService>();
             services.AddScoped<ICountryService, CountryService>();
+            services.AddScoped<IPractitionerService, PractitionerService>();
+            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Typed HttpClient so RecaptchaService gets a properly managed client
+            services.AddHttpClient<IRecaptchaService, RecaptchaService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+            });
 
             return services;
         }
